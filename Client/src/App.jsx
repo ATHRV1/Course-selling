@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Footer from './components/footer';
 import UserSignup from './components/UserSignup';
 import UserSignin from './components/UserSignin';
-// import CreatorSignup from './CreatorSignup';
+import CreatorSignup from './components/CreatorSignup';
 // import CreatorSignin from './CreatorSignin';
 function App() {
   return(
@@ -15,7 +15,7 @@ function App() {
           <Routes>
             <Route path="/user/signup" element={<UserSignup />} />
             <Route path="/user/signin" element={<UserSignin />} />
-            {/* <Route path="/creator/signup" element={<CreatorSignup />} /> */}
+            <Route path="/creator/signup" element={<CreatorSignup />} />
             {/* <Route path="/creator/signin" element={<CreatorSignin />} /> */}
             {/* You can add more routes here */}
           </Routes>

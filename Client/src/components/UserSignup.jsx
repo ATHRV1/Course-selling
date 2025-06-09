@@ -3,10 +3,10 @@ import { FiEye, FiEyeOff, FiMail } from "react-icons/fi";
 import { FiLock } from "react-icons/fi";
 import { useRef, useState } from "react";
 import axios from "axios";
-import { Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function UserSignup() {
-  const nav=useNavigate();
+  const nav = useNavigate();
   const [active, setActive] = useState(0);
   const Refs = [useRef(null), useRef(null), useRef(null), useRef(null)];
   const [data, setData] = useState({
@@ -209,12 +209,14 @@ export default function UserSignup() {
           </Link>
         </div>
         <div className="flex mt-2 ">
-          <p className="text-md ml-12 mt-0.5 w-75 text-gray-600">
+          <p className="text-md ml-12  mt-0.5 w-75 text-gray-600">
             Want to Teach on GyaanQuest?
           </p>
-          <p className="ml-1 mt-0.5 w-70 text-blue-400 font-bold text-md hover:text-blue-500 cursor-pointer">
-            Become an Instructor
-          </p>
+          <Link to="/creator/signup">
+            <p className=" mt-0.5 w-51.5 text-blue-400 font-bold text-md hover:text-blue-500 cursor-pointer">
+              Become an Instructor
+            </p>
+          </Link>
         </div>
       </div>
     </div>
