@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function UserSignin() {
+export default function CreatorSignin() {
     const nav = useNavigate();
     const [active, setActive] = useState(0);
     const Refs = [useRef(null), useRef(null)];
@@ -18,7 +18,7 @@ export default function UserSignin() {
 
     async function submit() {
         try {
-            await axios.post("http://localhost:3000/user/signin", data);
+            await axios.post("http://localhost:3000/creator/signin", data);
             nav('/');
         }
         catch (err) {
@@ -43,9 +43,9 @@ export default function UserSignin() {
     return (
         <div>
             <div className="shadow-xl w-120 h-130 m-15 mx-auto">
-                <h1 className="font-bold text-3xl ml-34 pt-5">Welcome Back</h1>
-                <p className="text-gray-500 ml-18 mt-3 text-lg">
-                    Sign in to continue your Learning Journey
+                <h1 className="font-bold text-3xl ml-31 pt-5">Instructor Portal</h1>
+                <p className="text-gray-500 ml-16 mt-3 text-lg">
+                    Sign in to manage your courses and students
                 </p>
                 <p className="mt-7 ml-10">Email Address</p>
                 <div
@@ -96,9 +96,9 @@ export default function UserSignin() {
                 <p className="text-red-500 text-sm mt-1.5 ml-10">{error}</p>
                 <button
                     onClick={submit}
-                    className="bg-blue-500 ml-10 w-100 rounded-lg mt-6 h-10 text-white text-xl hover:bg-blue-600 cursor-pointer"
+                    className="bg-blue-500 ml-10 w-100 rounded-lg mt-6 h-11 text-white text-xl hover:bg-blue-600 cursor-pointer"
                 >
-                    Sign in
+                    Sign in to Instructor Portal
                 </button>
                 <div className="flex mt-3">
                     <hr className="mt-5 w-45 ml-11 text-gray-300" />
@@ -106,20 +106,20 @@ export default function UserSignin() {
                     <hr className="mt-5 ml-2 w-45 text-gray-300" />
                 </div>
                 <div className="flex mt-4">
-                    <p className="text-md ml-24 mt-0.5">Don't have an Account?</p>
-                    <Link to="/user/signup">
+                    <p className="text-md ml-32 mt-0.5">New Instructor?</p>
+                    <Link to="/creator/signup">
                         <p className="ml-2 mt-0.5 text-blue-500 font-bold text-md hover:text-blue-600 cursor-pointer">
-                            Sign up now
+                            Apply to teach
                         </p>
                     </Link>
                 </div>
                 <div className="flex mt-2">
-                    <p className="text-md ml-22 mt-0.5 w-41 text-gray-600">
-                        Are you an Instructor?
+                    <p className="text-md ml-28 mt-0.5 w-33 text-gray-600">
+                        Looking to learn?
                     </p>
-                    <Link to="/creator/signin" >
-                        <p className="mt-0.5 w-40 text-blue-400 font-bold text-md hover:text-blue-500 cursor-pointer">
-                            Sign in as Creator
+                    <Link to="/user/signin">
+                        <p className="mt-0.5 w-30 text-blue-400 font-bold text-md hover:text-blue-500 cursor-pointer">
+                            Student sign in
                         </p>
                     </Link>
                 </div>

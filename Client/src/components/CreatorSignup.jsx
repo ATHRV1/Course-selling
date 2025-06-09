@@ -257,7 +257,7 @@ export default function CreatorSignup() {
                 </div>
                 <div className="flex mt-3">
                     <p className="text-lg ml-86 mt-0.5">Already an Instructor?</p>
-                    <Link to="/user/signin">
+                    <Link to="/creator/signin">
                         <p className="ml-2 mt-0.5 text-blue-500 font-bold text-lg hover:text-blue-600 cursor-pointer">
                             Sign in
                         </p>
