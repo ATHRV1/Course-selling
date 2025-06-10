@@ -27,7 +27,10 @@ const CreatorSchema = new Schema({
     courses: [{
         type: ObjectId,
         ref: 'Course'
-    }]
+    }],
+    area: {type: String, required:true},
+    experience: {type:String, required:true},
+    bio: {type: String}    
 })
 
 const CourseSchema = new Schema({

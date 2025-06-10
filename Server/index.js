@@ -66,7 +66,10 @@ app.post("/creator/signup", zodMiddleware, signupMiddleware, async (req, res) =>
         await CreatorModel.create({
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
+            area:req.body.area,
+            experience: req.body.experience,
+            bio:req.bio
         });
 
         return res.status(201).json({ 

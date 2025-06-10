@@ -15,7 +15,9 @@ export default function CreatorSignup() {
         email: "",
         password: "",
         confirm_password: "",
-        file: null
+        area: "",
+        experience: "",
+        bio: "",
     });
     const [passerror, setPasserror] = useState("");
     const [showPassword1, setShowPassword1] = useState(false);
@@ -81,7 +83,9 @@ export default function CreatorSignup() {
                         <p className="mt-7 ml-10">Full Name</p>
                         <div
                             tabIndex={0}
-                            className={`flex border-1 w-100 ml-10 mt-1 rounded-xl ${active === 0 ? "border-blue-500 ring-2 ring-blue-300 outline-none" : "null"
+                            className={`flex border-1 w-100 ml-10 mt-1 rounded-xl ${active === 0
+                                ? "border-blue-500 ring-2 ring-blue-300 outline-none"
+                                : "null"
                                 }`}
                         >
                             <FaRegUser className="mt-3 ml-2" />
@@ -102,7 +106,9 @@ export default function CreatorSignup() {
                     <div className="mt-3">
                         <p className="mt-4 ml-10">Email Address</p>
                         <div
-                            className={`flex border-1 w-100 ml-10 mt-1 rounded-xl ${active === 1 ? "border-blue-500 ring-2 ring-blue-300 outline-none" : "null"
+                            className={`flex border-1 w-100 ml-10 mt-1 rounded-xl ${active === 1
+                                ? "border-blue-500 ring-2 ring-blue-300 outline-none"
+                                : "null"
                                 }`}
                         >
                             <FiMail className="mt-3 ml-2" />
@@ -125,7 +131,9 @@ export default function CreatorSignup() {
                     <div>
                         <p className="mt-4 ml-10">Password</p>
                         <div
-                            className={`flex border-1 w-100 ml-10 mt-1 rounded-xl ${active === 2 ? "border-blue-500 ring-2 ring-blue-300 outline-none" : "null"
+                            className={`flex border-1 w-100 ml-10 mt-1 rounded-xl ${active === 2
+                                ? "border-blue-500 ring-2 ring-blue-300 outline-none"
+                                : "null"
                                 }`}
                         >
                             <FiLock className="mt-3 ml-2" />
@@ -154,9 +162,12 @@ export default function CreatorSignup() {
                             </button>
                         </div>
                     </div>
-                    <div><p className="mt-4 ml-10">Confirm Password</p>
+                    <div>
+                        <p className="mt-4 ml-10">Confirm Password</p>
                         <div
-                            className={`flex border-1 w-100 ml-10 mt-1 rounded-xl ${active === 3 ? "border-blue-500 ring-2 ring-blue-300 outline-none" : "null"
+                            className={`flex border-1 w-100 ml-10 mt-1 rounded-xl ${active === 3
+                                ? "border-blue-500 ring-2 ring-blue-300 outline-none"
+                                : "null"
                                 }`}
                         >
                             <FiLock className="mt-3 ml-2" />
@@ -193,7 +204,13 @@ export default function CreatorSignup() {
                 <div className="flex mt-2">
                     <div>
                         <p className="mt-7 ml-10">Area of Expertise</p>
-                        <select name="expertise" className="pl-2 w-100 ml-10 h-10 mt-1 border boorder-black rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none " >
+                        <select
+                            name="expertise"
+                            className="pl-2 w-100 ml-10 h-10 mt-1 border boorder-black rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none "
+                            onChange={(e) => {
+                                setData({ ...data, area: e.target.value });
+                            }}
+                        >
                             <option value="select">Select your Expertise</option>
                             <option value="Development">Development</option>
                             <option value="Design">Design</option>
@@ -207,7 +224,13 @@ export default function CreatorSignup() {
                     </div>
                     <div>
                         <p className="mt-7 ml-10">Years of Experience</p>
-                        <select name="experience" className=" p-2 w-100 ml-10 h-10 mt-1 border boorder-black rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none " >
+                        <select
+                            name="experience"
+                            className=" p-2 w-100 ml-10 h-10 mt-1 border boorder-black rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none "
+                            onChange={(e) => {
+                                setData({ ...data, experience: e.target.value });
+                            }}
+                        >
                             <option value="select">Select your Experience</option>
                             <option value="1-2">1-2 years</option>
                             <option value="3-5">3-5 years</option>
@@ -218,15 +241,27 @@ export default function CreatorSignup() {
                 </div>
                 <div>
                     <p className="mt-7 ml-10">Professional Bio</p>
-                    <textarea className=" pl-2 pt-1 ml-10 w-210 mt-1 h-30 border border-black rounded-xl  focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200" name="bio" id="bio" placeholder="Tell us about your Professional Background and what you had like to teach..."></textarea>
+                    <textarea
+                        className=" pl-2 pt-1 ml-10 w-210 mt-1 h-30 border border-black rounded-xl  focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        name="bio"
+                        id="bio"
+                        placeholder="Tell us about your Professional Background and what you had like to teach..."
+                        onChange={(e) => {
+                                setData({ ...data, bio: e.target.value });
+                            }}
+                    ></textarea>
                 </div>
                 <p className="mt-3 ml-10">Upload your Resume</p>
 
                 <div className="mt-1">
                     <input type="file" className="hidden" ref={fileRef} />
-                    <div onClick={boxClick} className="bg-blue-100 flex justify-center pt-10 h-30 ml-10 w-210 rounded-xl border-2 border-gray-400 border-dashed hover:bg-blue-200 cursor-pointer">Click here to Upload your Resume</div>
+                    <div
+                        onClick={boxClick}
+                        className="bg-blue-100 flex justify-center pt-10 h-30 ml-10 w-210 rounded-xl border-2 border-gray-400 border-dashed hover:bg-blue-200 cursor-pointer"
+                    >
+                        Click here to Upload your Resume
+                    </div>
                 </div>
-
 
                 <p className="text-red-500 text-sm mt-1.5 ml-10">{passerror}</p>
 

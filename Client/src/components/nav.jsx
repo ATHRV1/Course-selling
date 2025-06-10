@@ -18,7 +18,7 @@ export default function Nav() {
             </Link>
             <div className='flex ml-10 pt-2.5'>
                 <p className='text-lg ml-3 text-gray-800 cursor-pointer'>Courses</p>
-                <Link to={sign ? "/creator/portal":"/creator/signin"}>
+                <Link to={sign ? "/creator/dashboard":"/creator/signin"}>
                 <p className='text-lg ml-7 text-gray-800 cursor-pointer'>{sign ? 'Instructor' : 'Teach'}</p>
                 </Link>
             </div>

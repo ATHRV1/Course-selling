@@ -6,7 +6,7 @@ import UserSignup from './components/UserSignup';
 import UserSignin from './components/UserSignin';
 import CreatorSignup from './components/CreatorSignup';
 import CreatorSignin from './components/CreatorSignin';
-import CreatorPortal from './components/CreatorPortal';
+import CreatorDashboard from './components/CreatorDashboard';
 function App() {
   return(
     <BrowserRouter>
@@ -18,7 +18,7 @@ function App() {
             <Route path="/user/signin" element={<UserSignin />} />
             <Route path="/creator/signup" element={<CreatorSignup />} />
             <Route path="/creator/signin" element={<CreatorSignin />} />
-            <Route path="/creator/portal" element={<CreatorPortal />} />
+            <Route path="/creator/dashboard" element={<CreatorDashboard />} />
             {/* You can add more routes here */}
           </Routes>
         </div>
