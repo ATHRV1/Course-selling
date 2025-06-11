@@ -38,8 +38,10 @@ const CourseSchema = new Schema({
     description: { type: String },
     image: {
         type: String,
-        default: "C:/Users/HP/LMS/Server/Photos/course-d.png"
+        default: '"C:/Users/HP/LMS/Photos/course-d.png"'
     },
+    category:{type:String,required:true},
+    level:{type:String,required:true},
     creatorId: {
         type: ObjectId,
         ref: 'Creator',
@@ -54,15 +56,47 @@ const CourseSchema = new Schema({
     price: { type: Number, required: true },
     duration: String,
     isPublished: { type: Boolean, default: false },
+    
 
 }, { timestamps: true })
+
+const EnrollmentSchema = new Schema({
+    student: { type: ObjectId, ref: 'User', required: true },
+    course: { type: ObjectId, ref: 'Course', required: true },
+    creator: { type: ObjectId, ref: 'Creator', required: true },
+    enrolledAt: { type: Date, default: Date.now },
+    price: { type: Number, required: true }, 
+    status: { type: String, enum: ['active', 'completed', 'cancelled'], default: 'active' }
+});
+
+const CourseViewSchema = new Schema({
+    course: { type: ObjectId, ref: 'Course', required: true },
+    creator: { type: ObjectId, ref: 'Creator', required: true },
+    viewedAt: { type: Date, default: Date.now },
+    studentId: { type: ObjectId, ref: 'User' }, 
+});
+
+const RatingSchema = new Schema({
+    course: { type: ObjectId, ref: 'Course', required: true },
+    creator: { type: ObjectId, ref: 'Creator', required: true },
+    student: { type: ObjectId, ref: 'User', required: true },
+    rating: { type: Number, min: 1, max: 5, required: true },
+    review: { type: String },
+    createdAt: { type: Date, default: Date.now }
+});
 
 const UserModel = mongoose.model("User", UserSchema);
 const CreatorModel = mongoose.model("Creator", CreatorSchema);
 const CourseModel = mongoose.model("Course", CourseSchema);
+const EnrollmentModel = mongoose.model("Enrollment", EnrollmentSchema);
+const CourseViewModel=mongoose.model("View", CourseViewSchema);
+const RatingModel=mongoose.model("Rating", RatingSchema);
 
 export{
     UserModel,
     CreatorModel,
-    CourseModel
+    CourseModel,
+    EnrollmentModel,
+    CourseViewModel,
+    RatingModel
 }

@@ -1,11 +1,12 @@
 import express from 'express'
 const app = express()
-import { UserModel, CreatorModel } from "./db.js"
+import { UserModel, CreatorModel, RatingModel } from "./db.js"
 import bcrypt from 'bcrypt'
-import  { zodMiddleware, signupMiddleware, signinzodMiddleware } from "./Middleware/middle.js"
-import  jwt from "jsonwebtoken"
+import { zodMiddleware, signupMiddleware, signinzodMiddleware } from "./Middleware/middle.js"
+import jwt from "jsonwebtoken"
+import mongoose from 'mongoose'
 
-import  cors from 'cors';
+import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -17,7 +18,7 @@ app.get('/', (req, res) => {
 
 app.post("/user/signup", zodMiddleware, signupMiddleware, async (req, res) => {
     try {
-        const existingUser = await UserModel.findOne({ 
+        const existingUser = await UserModel.findOne({
             $or: [
                 { email: req.body.email },
                 { username: req.body.username }
@@ -25,32 +26,32 @@ app.post("/user/signup", zodMiddleware, signupMiddleware, async (req, res) => {
         });
 
         if (existingUser) {
-            return res.status(409).json({ 
-                message: "Creator with this email or username already exists" 
+            return res.status(409).json({
+                message: "Creator with this email or username already exists"
             });
         }
-        
+
         await UserModel.create({
             username: req.body.username,
             email: req.body.email,
             password: req.body.password
         });
 
-        return res.status(201).json({ 
-            message: "Account created successfully" 
+        return res.status(201).json({
+            message: "Account created successfully"
         });
     }
     catch (err) {
         console.error("Signup error:", err);
-        return res.status(500).json({ 
-            message: "Internal server error" 
+        return res.status(500).json({
+            message: "Internal server error"
         });
     }
 });
 
 app.post("/creator/signup", zodMiddleware, signupMiddleware, async (req, res) => {
     try {
-        const existingUser = await CreatorModel.findOne({ 
+        const existingUser = await CreatorModel.findOne({
             $or: [
                 { email: req.body.email },
                 { username: req.body.username }
@@ -58,34 +59,34 @@ app.post("/creator/signup", zodMiddleware, signupMiddleware, async (req, res) =>
         });
 
         if (existingUser) {
-            return res.status(409).json({ 
-                message: "User with this email or username already exists" 
+            return res.status(409).json({
+                message: "User with this email or username already exists"
             });
         }
-        
+
         await CreatorModel.create({
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
-            area:req.body.area,
+            area: req.body.area,
             experience: req.body.experience,
-            bio:req.bio
+            bio: req.bio
         });
 
-        return res.status(201).json({ 
-            message: "Account created successfully" 
+        return res.status(201).json({
+            message: "Account created successfully"
         });
     }
     catch (err) {
         console.error("Signup error:", err);
-        return res.status(500).json({ 
-            message: "Internal server error" 
+        return res.status(500).json({
+            message: "Internal server error"
         });
     }
 })
 
-app.post("/user/signin",signinzodMiddleware, async (req, res) => {
-    
+app.post("/user/signin", signinzodMiddleware, async (req, res) => {
+
     const auth = await UserModel.findOne({
         email: req.body.email
     })
@@ -134,11 +135,72 @@ app.post("/creator/signin", signinzodMiddleware, async (req, res) => {
     }
     else {
         res.status(403).json({
-            message: "Unauthorized or Incorrect Credentials"
+            message: "Unauthorized or Incorrect Credentials",
         })
     }
 })
 
+app.get("/creator/info", async (req, res) => {
+    const token = req.headers.token;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+        const auth = await CreatorModel.findOne({ _id: id }).populate({
+            path: 'courses',
+            select: 'title image enrolledUsers price isPublished'
+        });
+        const totalEnrolled = auth.courses.reduce((sum, course) =>
+            sum + course.enrolledUsers.length, 0
+        )
+        const totalRevenue = auth.courses.reduce((sum, course) =>
+            sum + (course.enrolledUsers.length * course.price), 0
+        )
+        const ratingResult = await RatingModel.aggregate([
+            { $match: { creator: id } },
+            {
+                $group: {
+                    _id: null,
+                    averageRating: { $avg: "$rating" },
+                }
+            }
+        ]);
+        const avgRating = ratingResult.length > 0 ? ratingResult[0].averageRating : 0;
+
+        const courseRating = await RatingModel.aggregate([
+            { $match: { creator: id } },
+            {
+                $group: {
+                    _id: "$course",
+                    averageRating: { $avg: "$rating" },
+                }
+            }
+        ]);
+        const ratingMap = {};
+        courseRating.forEach(rating => {
+            ratingMap[rating._id.toString()] = rating.averageRating;
+        });
+        const coursesData = auth.courses.map(course => ({
+            title: course.title,
+            image: course.image,
+            totalEnrolled: course.enrolledUsers.length,
+            averageRating: ratingMap[course._id.toString()] || 0,
+            totalEarned: course.enrolledUsers.length * course.price,
+            isPublished: course.isPublished
+        }));
+        res.json({
+            totalCourses: auth.courses.length,
+            totalStudents: totalEnrolled,
+            totalRevenue: totalRevenue,
+            averageRating: avgRating,
+            courses:coursesData
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            message: "Internal Network error"
+        });
+    }
+})
 
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`)
