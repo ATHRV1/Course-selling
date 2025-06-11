@@ -10,7 +10,7 @@ export default function CourseCard({ img, title, users, rating, revenue, publish
                 <p className="ml-2 mt-2">{title}</p>
                 <div className="flex mt-2">
                     <div className="flex">
-                        <FiUsers className="text-black w-3.5 h-3.5 ml-2 mt-2" />
+                        <FiUsers className="text-gray-500 w-3.5 h-3.5 ml-2 mt-2" />
                         <p className="text-sm mt-1 ml-0.5">{users}</p>
                     </div>
                     <div className="flex">

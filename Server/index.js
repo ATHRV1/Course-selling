@@ -1,6 +1,6 @@
 import express from 'express'
 const app = express()
-import { UserModel, CreatorModel, RatingModel } from "./db.js"
+import { UserModel, CreatorModel, RatingModel, CourseViewModel, EnrollmentModel } from "./db.js"
 import bcrypt from 'bcrypt'
 import { zodMiddleware, signupMiddleware, signinzodMiddleware } from "./Middleware/middle.js"
 import jwt from "jsonwebtoken"
@@ -145,6 +145,8 @@ app.get("/creator/info", async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const id = decoded.id;
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
         const auth = await CreatorModel.findOne({ _id: id }).populate({
             path: 'courses',
             select: 'title image enrolledUsers price isPublished'
@@ -187,12 +189,42 @@ app.get("/creator/info", async (req, res) => {
             totalEarned: course.enrolledUsers.length * course.price,
             isPublished: course.isPublished
         }));
+        const totalViews = await CourseViewModel.countDocuments({
+            creator: new mongoose.Types.ObjectId(id), // Fixed: creatorId -> id
+            viewedAt: { $gte: thirtyDaysAgo }
+        });
+
+        const enrollmentsLast30Days = await EnrollmentModel.countDocuments({
+            creator: new mongoose.Types.ObjectId(id), // Fixed: creatorId -> id
+            enrolledAt: { $gte: thirtyDaysAgo }
+        });
+        const revenueLast30Days = await EnrollmentModel.aggregate([
+            { 
+                $match: { 
+                    creator: new mongoose.Types.ObjectId(id),
+                    enrolledAt: { $gte: thirtyDaysAgo }
+                }
+            },
+            { 
+                $group: { 
+                    _id: null, 
+                    totalRevenue: { $sum: "$price" }
+                }
+            }
+        ]);
+         const revenue30Days = revenueLast30Days.length > 0 ? revenueLast30Days[0].totalRevenue : 0;
+
         res.json({
             totalCourses: auth.courses.length,
             totalStudents: totalEnrolled,
             totalRevenue: totalRevenue,
             averageRating: avgRating,
-            courses:coursesData
+            courses:coursesData,
+            last30:{
+                views: totalViews,
+                users: enrollmentsLast30Days,
+                revenue: revenue30Days
+            }
         })
     }
     catch (err) {
