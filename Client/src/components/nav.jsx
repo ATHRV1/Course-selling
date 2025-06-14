@@ -9,7 +9,7 @@ export default function Nav() {
     const sign=useAtomValue(CreatorSignin);
     
     return (
-        <div className='flex pt-4 shadow-sm pb-2'>
+        <div className='flex fixed pt-4 shadow-md top-0 z-50 w-full bg-white  pb-2'>
             <Link to="/">
                 <div className="flex ml-30 pt-1">
                     <IoBookOutline className="text-black w-10 h-10" />

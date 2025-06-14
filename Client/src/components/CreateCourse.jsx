@@ -89,7 +89,7 @@ export default function CreateCourse() {
         price: parseFloat(price), // Convert to number
         duration: duration.trim(),
         image: image ? image.name : "", // Handle null image
-        isPublished: true // Use correct field name
+        isPublished: true 
       };
       
       
@@ -204,14 +204,6 @@ export default function CreateCourse() {
           >
             {image ? `Selected: ${image.name}` : "Click to upload image"}
           </div>
-        </div>
-        <div className="mt-5 text-sm">
-          <p>Tags </p>
-          <input
-            type="text"
-            placeholder="e.g. JavaScript, React, Web Development"
-            className="border border-gray-300 rounded-lg mt-1 h-10 w-200 pl-2"
-          />
         </div>
       </div>
       <div className="flex mb-20">

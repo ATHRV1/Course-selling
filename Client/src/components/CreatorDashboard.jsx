@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { FiAward, FiDollarSign, FiEye, FiStar, FiUsers } from "react-icons/fi";
 import { IoBookOutline } from "react-icons/io5";
 import CourseCard from "./courseCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { BsPass } from "react-icons/bs";
 
 export default function CreatorDashboard() {
     const [size, setSize] = useState(0);
@@ -12,7 +13,8 @@ export default function CreatorDashboard() {
     const [rating, setRating] = useState(0.0);
     const [courses, setCourses] = useState([]);
     const [last30, setLast30] = useState([]);
-    
+    const nav = useNavigate();
+
     useEffect(() => {
         // console.log("ran");
         async function fetch() {
@@ -22,7 +24,7 @@ export default function CreatorDashboard() {
                     token: token,
                 },
             });
-            // console.log("Response:", res.data); // See what backend returns
+            console.log("Response:", res.data); // See what backend returns
             setSize(res.data.totalCourses);
             setStudents(res.data.totalStudents);
             setRevenue(res.data.totalRevenue);
@@ -38,6 +40,13 @@ export default function CreatorDashboard() {
         }
         fetch();
     }, []);
+
+    function handleCourseClick(course) {
+        console.log("hello");
+        nav('/course/creator/view', {
+            state: { course: course }
+        })
+    }
     return (
         <div>
             <div className="ml-50 mt-10 flex">
@@ -81,15 +90,19 @@ export default function CreatorDashboard() {
                 <div className="flex bg-white w-170 ml-50 rounded-xl mb-10 mt-10 ">
                     <div className=" flex-1 pb-5">
                         <p className="ml-5 mt-4 text-xl font-medium">Your Courses</p>
-                        {courses.map((course, index) => (
+                        {courses.map((course) => (
                             <CourseCard
-                                key={index}
+                                key={course.courseId}
                                 img={course.image}
                                 title={course.title}
                                 users={course.totalEnrolled}
                                 rating={course.averageRating}
                                 revenue={course.totalEarned}
                                 published={course.isPublished}
+                                onClick={() => {
+                                    console.log("Course clicked:", course);
+                                    handleCourseClick(course);
+                                }}
                             />
                         ))}
                     </div>
@@ -130,3 +143,4 @@ export default function CreatorDashboard() {
         </div>
     );
 }
+

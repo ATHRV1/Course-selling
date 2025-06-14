@@ -1,13 +1,13 @@
 import { FiDollarSign, FiStar, FiUsers } from "react-icons/fi";
 
-export default function CourseCard({ img, title, users, rating, revenue, published }) {
+export default function CourseCard({ img, title, users, rating, revenue, published, onClick }) {
     return (
-        <div className="bg-white ml-5 rounded-xl mt-5 h-20 flex w-161 border border-gray-200">
+        <div className="bg-white ml-5 rounded-xl mt-5 h-20 flex w-161 border border-gray-200 cursor-pointer" >
             <div className="w-16 h-16 rounded-xl mt-2 ml-2">
-                <img src={img} alt="" />
+                <img src={img? img:null} alt="" />
             </div>
             <div className="flex-1">
-                <p className="ml-2 mt-2">{title}</p>
+                <p className="ml-2 mt-2 hover:underline w-fit" onClick={onClick}>{title}</p>
                 <div className="flex mt-2">
                     <div className="flex">
                         <FiUsers className="text-gray-500 w-3.5 h-3.5 ml-2 mt-2" />
@@ -33,7 +33,20 @@ export default function CourseCard({ img, title, users, rating, revenue, publish
                         Draft
                     </div>
                 )}
-                <div className="rounded-lg bg-black text-white h-8.5 w-12 text-md pl-2.5 pt-1 mt-6.5 ml-2">
+                <div className="rounded-lg bg-black text-white h-8.5 w-17 text-md pl-2 pt-1 mt-6.5 ml-2 flex">
+                    <svg
+                                className="w-4 h-4 mr-1 mt-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                />
+                            </svg>
                     Edit
                 </div>
             </div>

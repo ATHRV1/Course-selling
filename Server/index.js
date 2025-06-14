@@ -149,7 +149,7 @@ app.get("/creator/info", async (req, res) => {
 
         const auth = await CreatorModel.findOne({ _id: id }).populate({
             path: 'courses',
-            select: 'title image enrolledUsers price isPublished'
+            // select: 'title image enrolledUsers price isPublished'
         });
         const totalEnrolled = auth.courses.reduce((sum, course) =>
             sum + course.enrolledUsers.length, 0
@@ -181,9 +181,16 @@ app.get("/creator/info", async (req, res) => {
         courseRating.forEach(rating => {
             ratingMap[rating._id.toString()] = rating.averageRating;
         });
+        // console.log(auth);
         const coursesData = auth.courses.map(course => ({
+            courseId: course._id.toString(),
             title: course.title,
+            description: course.description,
+            category: course.category,
+            level: course.level,
+            duration: course.duration,
             image: course.image,
+            price:course.price,
             totalEnrolled: course.enrolledUsers.length,
             averageRating: ratingMap[course._id.toString()] || 0,
             totalEarned: course.enrolledUsers.length * course.price,
@@ -250,7 +257,8 @@ app.post("/create/course", async (req, res) => {
             });
         }
         const id = decoded.id;
-        const { title, description, category, level, price, duration, image, published } = req.body;
+        const { title, description, category, level, price, duration, image, isPublished } = req.body;
+        // console.log(published);
         const course = await CourseModel.create({
             title: title,
             description: description,
@@ -261,10 +269,10 @@ app.post("/create/course", async (req, res) => {
             price: price,
             duration: duration,
             image: image,
-            isPublished: published,
+            isPublished: isPublished,
         });
         await CreatorModel.findByIdAndUpdate(
-            creatorId,
+            id,
             { 
                 $push: { courses: course._id } // Add course ID to courses array
             }
