@@ -38,7 +38,7 @@ const CourseSchema = new Schema({
     description: { type: String },
     image: {
         type: String,
-        default: '"C:/Users/HP/LMS/Photos/course-d.png"'
+        default: './Photos/course-d.png'
     },
     category:{type:String,required:true},
     level:{type:String,required:true},

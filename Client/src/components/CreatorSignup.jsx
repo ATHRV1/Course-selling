@@ -51,7 +51,7 @@ export default function CreatorSignup() {
         try {
             await axios.post("http://localhost:3000/creator/signup", data);
             setError("");
-            nav("/");
+            nav("/creator/signin");
         } catch (err) {
             if (err.response) {
                 setError(err.response.data.message);

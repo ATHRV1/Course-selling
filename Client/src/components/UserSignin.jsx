@@ -18,7 +18,8 @@ export default function UserSignin() {
 
     async function submit() {
         try {
-            await axios.post("http://localhost:3000/user/signin", data);
+            const response = await axios.post("http://localhost:3000/user/signin", data);
+            localStorage.setItem('token', response.data.token);
             nav('/');
         }
         catch (err) {

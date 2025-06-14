@@ -1,6 +1,6 @@
 import express from 'express'
 const app = express()
-import { UserModel, CreatorModel, RatingModel, CourseViewModel, EnrollmentModel } from "./db.js"
+import { UserModel, CreatorModel, RatingModel, CourseViewModel, EnrollmentModel, CourseModel } from "./db.js"
 import bcrypt from 'bcrypt'
 import { zodMiddleware, signupMiddleware, signinzodMiddleware } from "./Middleware/middle.js"
 import jwt from "jsonwebtoken"
@@ -199,28 +199,28 @@ app.get("/creator/info", async (req, res) => {
             enrolledAt: { $gte: thirtyDaysAgo }
         });
         const revenueLast30Days = await EnrollmentModel.aggregate([
-            { 
-                $match: { 
+            {
+                $match: {
                     creator: new mongoose.Types.ObjectId(id),
                     enrolledAt: { $gte: thirtyDaysAgo }
                 }
             },
-            { 
-                $group: { 
-                    _id: null, 
+            {
+                $group: {
+                    _id: null,
                     totalRevenue: { $sum: "$price" }
                 }
             }
         ]);
-         const revenue30Days = revenueLast30Days.length > 0 ? revenueLast30Days[0].totalRevenue : 0;
+        const revenue30Days = revenueLast30Days.length > 0 ? revenueLast30Days[0].totalRevenue : 0;
 
         res.json({
             totalCourses: auth.courses.length,
             totalStudents: totalEnrolled,
             totalRevenue: totalRevenue,
             averageRating: avgRating,
-            courses:coursesData,
-            last30:{
+            courses: coursesData,
+            last30: {
                 views: totalViews,
                 users: enrollmentsLast30Days,
                 revenue: revenue30Days
@@ -230,6 +230,53 @@ app.get("/creator/info", async (req, res) => {
     catch (err) {
         res.status(500).json({
             message: "Internal Network error"
+        });
+    }
+})
+
+app.post("/create/course", async (req, res) => {
+    const token = req.headers.token;
+    if (!token) {
+        return res.status(401).json({
+            message: "Unauthorized"
+        });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (!decoded || !decoded.id) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+        const id = decoded.id;
+        const { title, description, category, level, price, duration, image, published } = req.body;
+        const course = await CourseModel.create({
+            title: title,
+            description: description,
+            category: category,
+            level: level,
+            creatorId: id,
+            enrolledUsers: [],
+            price: price,
+            duration: duration,
+            image: image,
+            isPublished: published,
+        });
+        await CreatorModel.findByIdAndUpdate(
+            creatorId,
+            { 
+                $push: { courses: course._id } // Add course ID to courses array
+            }
+        );
+        res.status(201).json({
+            message: "Course created successfully",
+        });
+    }
+    catch (err) {
+        console.error("Error creating course:", err);
+        res.status(500).json({
+            message: "Internal server error"
         });
     }
 })

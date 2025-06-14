@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { FiAward, FiDollarSign, FiEye, FiStar, FiUsers } from "react-icons/fi";
 import { IoBookOutline } from "react-icons/io5";
 import CourseCard from "./courseCard";
+import { Link } from "react-router-dom";
 
 export default function CreatorDashboard() {
     const [size, setSize] = useState(0);
@@ -10,8 +11,10 @@ export default function CreatorDashboard() {
     const [revenue, setRevenue] = useState(0);
     const [rating, setRating] = useState(0.0);
     const [courses, setCourses] = useState([]);
-    const [last30, setLast30] =useState([]);
+    const [last30, setLast30] = useState([]);
+    
     useEffect(() => {
+        // console.log("ran");
         async function fetch() {
             const token = localStorage.getItem("token");
             const res = await axios.get("http://localhost:3000/creator/info", {
@@ -25,8 +28,12 @@ export default function CreatorDashboard() {
             setRevenue(res.data.totalRevenue);
             setRating(res.data.averageRating);
             setCourses(res.data.courses);
-            setLast30([res.data.last30.views, res.data.last30.users, res.data.last30.revenue]);
-            console.log(res.data.last30);
+            setLast30([
+                res.data.last30.views,
+                res.data.last30.users,
+                res.data.last30.revenue,
+            ]);
+            // console.log(res.data.last30);
             // console.log(rating);
         }
         fetch();
@@ -42,9 +49,11 @@ export default function CreatorDashboard() {
                         Manage your Courses and track Performance
                     </p>
                 </div>
-                <button className="bg-black text-white rounded-xl h-11 w-42 ml-140 mt-2.5 text-lg cursor-pointer hover:bg-gray-800">
-                    + Create Course
-                </button>
+                <Link to="/create/course">
+                    <button className="bg-black text-white rounded-xl h-11 w-42 ml-140 mt-2.5 text-lg cursor-pointer hover:bg-gray-800">
+                        + Create Course
+                    </button>
+                </Link>
             </div>
             <div className="flex">
                 <div className="ml-50 bg-white mt-5 w-62 h-32 p-5 rounded-xl">
@@ -70,54 +79,53 @@ export default function CreatorDashboard() {
             </div>
             <div className="flex items-start">
                 <div className="flex bg-white w-170 ml-50 rounded-xl mb-10 mt-10 ">
-                <div className=" flex-1 pb-5">
-                    <p className="ml-5 mt-4 text-xl font-medium">Your Courses</p>
-                    {courses.map((course, index) => (
-                        <CourseCard
-                            key={index}
-                            img={course.image}
-                            title={course.title}
-                            users={course.totalEnrolled}
-                            rating={course.averageRating}
-                            revenue={course.totalEarned}
-                            published={course.isPublished}
-                        />
-                    ))}
+                    <div className=" flex-1 pb-5">
+                        <p className="ml-5 mt-4 text-xl font-medium">Your Courses</p>
+                        {courses.map((course, index) => (
+                            <CourseCard
+                                key={index}
+                                img={course.image}
+                                title={course.title}
+                                users={course.totalEnrolled}
+                                rating={course.averageRating}
+                                revenue={course.totalEarned}
+                                published={course.isPublished}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
-            <div className="ml-5 mt-10">
-                <div className="bg-white pl-4 pb-4 rounded-xl w-95">
-                    <p className="font-medium w-95 pt-4">Last 30 Days</p>
-                    <div className="flex mt-6">
-                        <FiEye className="text-gray-500 w-4.5 h-4.5 mt-1" />
-                        <p className="ml-2 text-gray-700 flex-1">Course Views</p>
-                        <p className="mr-10 text-lg font-medium">{last30[0]}</p>
+                <div className="ml-5 mt-10">
+                    <div className="bg-white pl-4 pb-4 rounded-xl w-95">
+                        <p className="font-medium w-95 pt-4">Last 30 Days</p>
+                        <div className="flex mt-6">
+                            <FiEye className="text-gray-500 w-4.5 h-4.5 mt-1" />
+                            <p className="ml-2 text-gray-700 flex-1">Course Views</p>
+                            <p className="mr-10 text-lg font-medium">{last30[0]}</p>
+                        </div>
+                        <div className="flex mt-6">
+                            <FiUsers className="text-gray-500 w-4.5 h-4.5 mt-1" />
+                            <p className="ml-2 flex-1 text-gray-700">New Students</p>
+                            <p className="mr-10 text-lg font-medium">{last30[1]}</p>
+                        </div>
+                        <div className="flex mt-6">
+                            <FiDollarSign className="text-gray-500 w-4.5 h-4.5 mt-1" />
+                            <p className="ml-2 flex-1 text-gray-700">Revenue </p>
+                            <p className="mr-10 text-lg font-medium">${last30[2]}</p>
+                        </div>
                     </div>
-                    <div className="flex mt-6">
-                        <FiUsers className="text-gray-500 w-4.5 h-4.5 mt-1" />
-                        <p className="ml-2 flex-1 text-gray-700">New Students</p>
-                        <p className="mr-10 text-lg font-medium">{last30[1]}</p>
+                    <div className="bg-gray-800 pl-4 pb-4 rounded-xl w-95 mt-5 mb-20">
+                        <div className="flex pt-4">
+                            <FiAward className="text-white w-4.5 h-4.5 mt-1" />
+                            <p className="ml-2 text-white font-medium">Tip</p>
+                        </div>
+                        <div className="pr-6">
+                            <p className="text-gray-200 mt-2 text-xs">
+                                Engage with your students by responding to questions promptly.
+                                This helps build community and improves course ratings.
+                            </p>
+                        </div>
                     </div>
-                    <div className="flex mt-6">
-                        <FiDollarSign className="text-gray-500 w-4.5 h-4.5 mt-1" />
-                        <p className="ml-2 flex-1 text-gray-700">Revenue </p>
-                        <p className="mr-10 text-lg font-medium">${last30[2]}</p>
-                    </div>
-
-
                 </div>
-                <div className="bg-gray-800 pl-4 pb-4 rounded-xl w-95 mt-5 mb-20">
-                    <div className="flex pt-4">
-                        <FiAward className="text-white w-4.5 h-4.5 mt-1" />
-                        <p className="ml-2 text-white font-medium">Tip</p>
-                    </div>
-                    <div className="pr-6">
-                        <p className="text-gray-200 mt-2 text-xs">Engage with your students by responding to questions promptly. This helps build community and improves course ratings.</p>
-                    </div>
-
-
-                </div>
-            </div>
             </div>
         </div>
     );
