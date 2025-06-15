@@ -372,7 +372,6 @@ app.delete("/delete/course", async (req, res) => {
             });
         }
 
-        // Remove course ID from creator's courses array
         await CreatorModel.findByIdAndUpdate(
             creatorId,
             { 
