@@ -24,9 +24,26 @@ export default function EditCourse() {
         return (<div className="ml-170 mt-10 text-2xl text-red-500">Course not found</div>)
     }
 
-    const handleDeleteCourse = () => {
-        // Handle course deletion
-        console.log('Delete course');
+    const handleDeleteCourse = async () => {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            alert("No authentication token found");
+            return;
+        }
+
+        try {
+            await axios.post("http://localhost:3000/delete/course",
+                { courseId: courseData.courseId },
+                { headers: { token } }
+            );
+            alert("Course deleted successfully");
+            nav("/creator/dashboard");
+            // Add any other logic like redirecting or refreshing
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert(err.response?.data?.message || "Failed to delete course");
+        }
     };
 
     const handleRemoveThumbnail = () => {
@@ -65,7 +82,7 @@ export default function EditCourse() {
         const token = localStorage.getItem('token');
         try {
             await axios.post("http://localhost:3000/edit/course", {
-                courseId:courseData.courseId,
+                courseId: courseData.courseId,
                 title: title.trim(),
                 description: description.trim(),
                 category,
@@ -105,7 +122,7 @@ export default function EditCourse() {
                     </div>
                     <button
                         onClick={handleDeleteCourse}
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                     >
                         <Trash2 className="w-5 h-5 text-red-500" />
                     </button>

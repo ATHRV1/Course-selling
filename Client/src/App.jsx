@@ -10,6 +10,8 @@ import CreatorDashboard from './components/CreatorDashboard';
 import CreateCourse from './components/CreateCourse';
 import CreatorCourseView from './components/CreatorCourseView';
 import EditCourse from './components/EditCourse';
+
+
 function App() {
   return (
     <BrowserRouter>

@@ -343,7 +343,8 @@ app.post("/edit/course", async (req, res) => {
     }
 });
 
-app.delete("/delete/course", async (req, res) => {
+app.post("/delete/course", async (req, res) => {
+    // console.log(req);
     const token = req.headers.token;
     
     if (!token) {
