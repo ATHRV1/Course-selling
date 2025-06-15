@@ -370,7 +370,7 @@ app.delete("/delete/course", async (req, res) => {
                 message: "Course not found"
             });
         }
-
+ 
         await CreatorModel.findByIdAndUpdate(
             creatorId,
             { 
