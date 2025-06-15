@@ -363,7 +363,6 @@ app.delete("/delete/course", async (req, res) => {
         const { courseId } = req.body;
         const creatorId = decoded.id;
         
-        // Delete the course
         const deletedCourse = await CourseModel.findByIdAndDelete(courseId);
         
         if (!deletedCourse) {
