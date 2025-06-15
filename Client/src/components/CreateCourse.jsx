@@ -206,21 +206,21 @@ export default function CreateCourse() {
           </div>
         </div>
       </div>
-      <div className="flex mb-20">
+      {error && (
+        <p className="text-red-500 ml-95 mt-5">{errorMessage || "Internal Network error"}</p>
+      )}
+      <div className="flex mb-20 mt-5">
         <Link to="/creator/dashboard">
-          <button className="bg-gray-100 ml-85 text-black rounded-lg h-10 w-32 mt-10 border border-gray-300 cursor-pointer hover:bg-gray-200">Cancel</button>
+          <button className="bg-gray-100 ml-85 text-black rounded-lg h-10 w-32 mt-5 border border-gray-300 cursor-pointer hover:bg-gray-200">Cancel</button>
         </Link>
-        <div onClick={draft} className=" flex bg-gray-100 ml-102 mt-10 text-black rounded-lg h-10 w-30 pl-2 cursor-pointer border border-gray-300 hover:bg-gray-200">
+        <div onClick={draft} className=" flex bg-gray-100 ml-102 mt-5 text-black rounded-lg h-10 w-30 pl-2 cursor-pointer border border-gray-300 hover:bg-gray-200">
           <p className="ml-1 mt-2">Save as Draft</p>
         </div>
-        <div className=" flex bg-black ml-4 mt-10 text-white rounded-lg h-10 w-40 cursor-pointer" onClick={publish}>
+        <div className=" flex bg-black ml-4 mt-5 text-white rounded-lg h-10 w-40 cursor-pointer" onClick={publish}>
           <FiSave className=" h-6 w-6 mt-2 ml-2 text-white" />
           <p className="ml-1 mt-2">Publish Course</p>
         </div>
       </div>
-      {error && (
-        <p className="text-red-500 ml-85">{errorMessage || "Internal Network error"}</p>
-      )}
     </div>
   );
 }

@@ -289,6 +289,109 @@ app.post("/create/course", async (req, res) => {
     }
 })
 
+app.post("/edit/course", async (req, res) => {
+    const token = req.headers.token;
+    
+    if (!token) {
+        return res.status(401).json({
+            message: "Unauthorized"
+        });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (!decoded || !decoded.id) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        const { courseId, title, description, category, level, price, duration, image, isPublished } = req.body;
+        
+        // Update the course
+        const updatedCourse = await CourseModel.findByIdAndUpdate(
+            courseId,
+            {
+                title,
+                description,
+                category,
+                level,
+                price,
+                duration,
+                image,
+                isPublished
+            },
+            { new: true }
+        );
+
+        if (!updatedCourse) {
+            return res.status(404).json({
+                message: "Course not found"
+            });
+        }
+
+        res.status(200).json({
+            message: "Course updated successfully",
+            course: updatedCourse
+        });
+    }
+    catch (err) {
+        console.error("Error updating course:", err);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
+
+app.delete("/delete/course", async (req, res) => {
+    const token = req.headers.token;
+    
+    if (!token) {
+        return res.status(401).json({
+            message: "Unauthorized"
+        });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (!decoded || !decoded.id) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        const { courseId } = req.body;
+        const creatorId = decoded.id;
+        
+        // Delete the course
+        const deletedCourse = await CourseModel.findByIdAndDelete(courseId);
+        
+        if (!deletedCourse) {
+            return res.status(404).json({
+                message: "Course not found"
+            });
+        }
+
+        // Remove course ID from creator's courses array
+        await CreatorModel.findByIdAndUpdate(
+            creatorId,
+            { 
+                $pull: { courses: courseId }
+            }
+        );
+
+        res.status(200).json({
+            message: "Course deleted successfully"
+        });
+    }
+    catch (err) {
+        console.error("Error deleting course:", err);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
+
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`)
 })

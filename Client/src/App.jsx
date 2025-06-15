@@ -9,10 +9,11 @@ import CreatorSignin from './components/CreatorSignin';
 import CreatorDashboard from './components/CreatorDashboard';
 import CreateCourse from './components/CreateCourse';
 import CreatorCourseView from './components/CreatorCourseView';
+import EditCourse from './components/EditCourse';
 function App() {
-  return(
+  return (
     <BrowserRouter>
-      <div className= 'flex flex-col w-screen min-h-screen bg-gray-50'>
+      <div className='flex flex-col w-screen min-h-screen bg-gray-50'>
         <Nav />
         <div className='flex-grow mt-18'>
           <Routes>
@@ -23,6 +24,7 @@ function App() {
             <Route path="/creator/dashboard" element={<CreatorDashboard />} />
             <Route path="/create/course" element={<CreateCourse />} />
             <Route path="/course/creator/view" element={<CreatorCourseView />} />
+            <Route path="/edit/course" element={<EditCourse />} />
             {/* You can add more routes here */}
           </Routes>
         </div>

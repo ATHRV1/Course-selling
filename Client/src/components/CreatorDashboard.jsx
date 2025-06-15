@@ -42,8 +42,13 @@ export default function CreatorDashboard() {
     }, []);
 
     function handleCourseClick(course) {
-        console.log("hello");
+        // console.log("hello");
         nav('/course/creator/view', {
+            state: { course: course }
+        })
+    }
+    function handleEditClick(course){
+        nav('/edit/course', {
             state: { course: course }
         })
     }
@@ -99,10 +104,10 @@ export default function CreatorDashboard() {
                                 rating={course.averageRating}
                                 revenue={course.totalEarned}
                                 published={course.isPublished}
-                                onClick={() => {
-                                    console.log("Course clicked:", course);
+                                onTitleClick={() => {
                                     handleCourseClick(course);
                                 }}
+                                onEditClick={()=>{handleEditClick(course)}}
                             />
                         ))}
                     </div>

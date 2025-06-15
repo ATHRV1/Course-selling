@@ -14,7 +14,7 @@ export default function CreatorCourseView() {
             isPublished,
         } = courseData;
         return (
-            <div>
+            <div className="mb-20">
                 <div className="flex ml-90 mt-5">
                     <Link to="/creator/dashboard">
                         <div className="flex text-gray-700">
@@ -25,7 +25,7 @@ export default function CreatorCourseView() {
                     {isPublished ? (
                         <div className="flex gap-2 ml-140 mt-3">
                             <button
-                                className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                                className="flex cursor-pointer items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                             >
                                 <svg
                                     className="w-4 h-4"
@@ -45,7 +45,7 @@ export default function CreatorCourseView() {
 
                             <button
                                 // onClick={onDelete}
-                                className="flex items-center justify-center w-10 h-10 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition-colors duration-200"
+                                className="flex cursor-pointer items-center justify-center w-10 h-10 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition-colors duration-200"
                             >
                                 <svg
                                     className="w-5 h-5"
@@ -66,7 +66,7 @@ export default function CreatorCourseView() {
                         <div className="flex gap-2 ml-110 mt-3">
                             <button
                                 // onClick={onPublish}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${isPublished
+                                className={`flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${isPublished
                                     ? "bg-green-100 hover:bg-green-200 text-green-700"
                                     : "bg-blue-600 hover:bg-blue-700 text-white"
                                     }`}
@@ -92,7 +92,7 @@ export default function CreatorCourseView() {
                             </button>
                             <button
                                 // onClick={onEdit}
-                                className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                                className="flex cursor-pointer items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                             >
                                 <svg
                                     className="w-4 h-4"
@@ -112,7 +112,7 @@ export default function CreatorCourseView() {
 
                             <button
                                 // onClick={onDelete}
-                                className="flex items-center justify-center w-10 h-10 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition-colors duration-200"
+                                className="flex cursor-pointer items-center justify-center w-10 h-10 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition-colors duration-200"
                             >
                                 <svg
                                     className="w-5 h-5"
