@@ -415,6 +415,34 @@ app.get("/creator/credentials", async (req, res) => {
     }
 })
 
+app.post("/creator/update", async (req, res) => {
+    const token = req.headers.token;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+
+        const { username, email, expertise, experience, bio } = req.body;
+
+        await CreatorModel.findByIdAndUpdate(id, {
+            username: username,
+            email: email,
+            area: expertise,
+            experience: experience,
+            bio: bio
+        });
+
+        res.json({
+            message: "Profile updated successfully"
+        });
+    }
+    catch (err) {
+        console.error("Error updating profile:", err);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+})
+
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`)
 })

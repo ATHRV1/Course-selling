@@ -13,6 +13,12 @@ import axios from "axios";
 export default function CreatorProfile() {
     const [profile, setProfile] = useState(true);
     const ini = useAtomValue(initialLetter);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [expertise, setExpertise] = useState('');
+    const [experience, setExperience] = useState('');
+    const [bio, setBio] = useState('');
+    const [success, setSuccess] = useState(false);
 
     useEffect(() => {
         async function fetch() {
@@ -22,22 +28,35 @@ export default function CreatorProfile() {
                     token: token,
                 },
             });
-            console.log("Response:", res.data); // See what backend returns
-            setSize(res.data.totalCourses);
-            setStudents(res.data.totalStudents);
-            setRevenue(res.data.totalRevenue);
-            setRating(res.data.averageRating);
-            setCourses(res.data.courses);
-            setLast30([
-                res.data.last30.views,
-                res.data.last30.users,
-                res.data.last30.revenue,
-            ]);
-            // console.log(res.data.last30);
-            // console.log(rating);
+            setName(res.data.username);
+            setEmail(res.data.email);
+            setExpertise(res.data.expertise);
+            setExperience(res.data.experience);
+            setBio(res.data.bio);
         }
         fetch();
     }, []);
+
+    function handleSave() {
+        const token = localStorage.getItem("token");
+        axios.post("http://localhost:3000/creator/update", {
+            username: name,
+            email: email,
+            expertise: expertise,
+            experience: experience,
+            bio: bio
+        }, {
+            headers: {
+                token: token,
+            },
+        })
+        .then(() => {
+            setSuccess(true);
+        })
+        .catch(error => {
+            console.error("There was an error updating the profile!", error);
+        });
+    }
 
     return (
         <div className="mb-20">
@@ -76,7 +95,7 @@ export default function CreatorProfile() {
                             </div>
 
                             <div className="ml-5 mt-10">
-                                <h2 className="text-xl font-semibold">Sarah Johnson</h2>
+                                <h2 className="text-xl font-semibold">{name}</h2>
                                 <p className="text-gray-600">Instructor</p>
                             </div>
 
@@ -85,13 +104,14 @@ export default function CreatorProfile() {
                             <div>
                                 <p className="mt-7 ml-2">Full Name</p>
                                 <div
-                                    tabIndex={0}
+
                                     className={`flex border-1 w-100 ml-2 mt-1 rounded-xl `}
                                 >
                                     <FaRegUser className="mt-3 ml-2" />
                                     <input
                                         type="text"
-                                        placeholder="Athrv Mittal"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
                                         className="h-10 ml-3 border-none outline-none focus:ring-0 focus:border-none w-87 "
                                     />
                                 </div>
@@ -104,7 +124,8 @@ export default function CreatorProfile() {
                                     <FiMail className="mt-3 ml-2" />
                                     <input
                                         type="text"
-                                        placeholder="your@email.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         className="h-10 ml-3 border-none outline-none focus:ring-0 focus:border-none w-87 "
                                     />
                                 </div>
@@ -115,6 +136,8 @@ export default function CreatorProfile() {
                                 <p className="mt-7 ml-2">Area of Expertise</p>
                                 <select
                                     name="expertise"
+                                    value={expertise}
+                                    onChange={(e) => setExpertise(e.target.value)}
                                     className="pl-2 w-100 ml-2 h-10 mt-1 border boorder-black rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none "
 
                                 >
@@ -133,6 +156,8 @@ export default function CreatorProfile() {
                                 <p className="mt-7 ml-5">Years of Experience</p>
                                 <select
                                     name="experience"
+                                    value={experience}
+                                    onChange={(e) => setExperience(e.target.value)}
                                     className=" p-2 w-100 ml-5 h-10 mt-1 border boorder-black rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none "
 
                                 >
@@ -150,16 +175,20 @@ export default function CreatorProfile() {
                                 className=" pl-2 pt-1 ml-2 w-205 mt-1 h-30 border border-black rounded-xl  focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
                                 name="bio"
                                 id="bio"
-                                placeholder="Tell us about your Professional Background and what you had like to teach..."
+                                value={bio}
+                                onChange={(e) => setBio(e.target.value)}
                             ></textarea>
                         </div>
                         <button
-                            // onClick={handleSaveChanges}
+                            onClick={handleSave}
                             className="flex ml-2 mt-5 cursor-pointer py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
                         >
                             <FiSave className=" h-5 w-5 mt-0.5 ml-2 text-white" />
                             <p className=' ml-2 mr-2'>Save Changes</p>
                         </button>
+                        {success && (
+                            <p className="text-green-500 mt-2 ml-2">Profile updated successfully!</p>
+                        )}
                     </div>
 
                 ) : (<div> hello</div>)}
