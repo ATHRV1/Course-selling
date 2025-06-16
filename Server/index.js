@@ -129,7 +129,8 @@ app.post("/creator/signin", signinzodMiddleware, async (req, res) => {
                 id: auth._id.toString()
             }, process.env.JWT_SECRET, { expiresIn: '1d' });
             res.json({
-                token: token
+                token: token,
+                name:auth.username
             })
         }
     }
@@ -390,6 +391,29 @@ app.post("/delete/course", async (req, res) => {
         });
     }
 });
+
+app.get("/creator/credentials", async (req, res) => {
+    const token = req.headers.token;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+        
+        const auth = await CreatorModel.findOne({ _id: id });
+        
+        res.json({
+            username:auth.username,
+            email:auth.email,
+            expertise:auth.area,
+            experience:auth.experience,
+            bio:auth.bio,
+        })
+    }
+    catch (err) {
+        res.status(500).json({
+            message: "Internal Network error"
+        });
+    }
+})
 
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`)

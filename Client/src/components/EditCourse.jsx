@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ArrowLeft, Trash2, X, Upload, Image } from 'lucide-react';
 import { useState } from 'react';
+import { FiSave } from 'react-icons/fi';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function EditCourse() {
@@ -296,9 +297,10 @@ export default function EditCourse() {
                             </button></Link>
                         <button
                             onClick={handleSaveChanges}
-                            className=" cursor-pointer px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                            className="flex cursor-pointer py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
                         >
-                            Save Changes
+                            <FiSave className=" h-5 w-5 mt-0.5 ml-2 text-white" />
+                            <p className=' ml-2 mr-2'>Save Changes</p>
                         </button>
                     </div>
                 </div>

@@ -10,6 +10,8 @@ import CreatorDashboard from './components/CreatorDashboard';
 import CreateCourse from './components/CreateCourse';
 import CreatorCourseView from './components/CreatorCourseView';
 import EditCourse from './components/EditCourse';
+import CreatorProfile from './components/CreatorProfile';
+
 
 
 function App() {
@@ -27,6 +29,7 @@ function App() {
             <Route path="/create/course" element={<CreateCourse />} />
             <Route path="/course/creator/view" element={<CreatorCourseView />} />
             <Route path="/edit/course" element={<EditCourse />} />
+            <Route path="/creator/profile" element={<CreatorProfile />} />
             {/* You can add more routes here */}
           </Routes>
         </div>

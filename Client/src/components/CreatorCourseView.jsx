@@ -1,18 +1,39 @@
+import axios from "axios";
 import { FiArrowLeft } from "react-icons/fi";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function CreatorCourseView() {
     const location = useLocation();
     const courseData = location.state?.course;
+    const nav=useNavigate();
+
+    async function onDelete(){
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            alert("No authentication token found");
+            return;
+        }
+
+        try {
+            await axios.post("http://localhost:3000/delete/course",
+                { courseId: courseData.courseId },
+                { headers: { token } }
+            );
+            alert("Course deleted successfully");
+            nav("/creator/dashboard");
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert(err.response?.data?.message || "Failed to delete course");
+        }
+    }
+
 
     if (!courseData) {
         return (
             <div className="ml-170 mt-10 text-2xl text-red-500">Course not found</div>
         );
     } else {
-        const {
-            isPublished,
-        } = courseData;
         return (
             <div className="mb-20">
                 <div className="flex ml-90 mt-5">
@@ -22,8 +43,9 @@ export default function CreatorCourseView() {
                             <p className="mt-4">Back to Dashboard</p>
                         </div>
                     </Link>
-                    {isPublished ? (
+                    
                         <div className="flex gap-2 ml-140 mt-3">
+                            <Link to="/edit/course">
                             <button
                                 className="flex cursor-pointer items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                             >
@@ -41,10 +63,10 @@ export default function CreatorCourseView() {
                                     />
                                 </svg>
                                 Edit
-                            </button>
+                            </button></Link>
 
                             <button
-                                // onClick={onDelete}
+                                onClick={onDelete}
                                 className="flex cursor-pointer items-center justify-center w-10 h-10 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition-colors duration-200"
                             >
                                 <svg
@@ -62,74 +84,7 @@ export default function CreatorCourseView() {
                                 </svg>
                             </button>
                         </div>
-                    ) : (
-                        <div className="flex gap-2 ml-110 mt-3">
-                            <button
-                                // onClick={onPublish}
-                                className={`flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${isPublished
-                                    ? "bg-green-100 hover:bg-green-200 text-green-700"
-                                    : "bg-blue-600 hover:bg-blue-700 text-white"
-                                    }`}
-                            >
-                                <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d={
-                                            isPublished
-                                                ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                                : "M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                                        }
-                                    />
-                                </svg>
-                                Publish
-                            </button>
-                            <button
-                                // onClick={onEdit}
-                                className="flex cursor-pointer items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-                            >
-                                <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                    />
-                                </svg>
-                                Edit
-                            </button>
-
-                            <button
-                                // onClick={onDelete}
-                                className="flex cursor-pointer items-center justify-center w-10 h-10 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 rounded-lg transition-colors duration-200"
-                            >
-                                <svg
-                                    className="w-5 h-5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    )}
+                    
                 </div>
                 <div className="flex">
                     <div className="w-135 ml-92 mt-10 ">

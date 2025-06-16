@@ -4,7 +4,6 @@ import { FiAward, FiDollarSign, FiEye, FiStar, FiUsers } from "react-icons/fi";
 import { IoBookOutline } from "react-icons/io5";
 import CourseCard from "./courseCard";
 import { Link, useNavigate } from "react-router-dom";
-import { BsPass } from "react-icons/bs";
 
 export default function CreatorDashboard() {
     const [size, setSize] = useState(0);
@@ -42,7 +41,6 @@ export default function CreatorDashboard() {
     }, []);
 
     function handleCourseClick(course) {
-        // console.log("hello");
         nav('/course/creator/view', {
             state: { course: course }
         })

@@ -3,8 +3,13 @@ import { FiLock } from "react-icons/fi";
 import { useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
+import { CreatorSigninDone, initialLetter } from '../../atoms/atom';
+import { useSetAtom } from "jotai";
+
 
 export default function CreatorSignin() {
+    const setSign=useSetAtom(CreatorSigninDone);
+    const setIni=useSetAtom(initialLetter)
     const nav = useNavigate();
     const [active, setActive] = useState(0);
     const Refs = [useRef(null), useRef(null)];
@@ -20,6 +25,8 @@ export default function CreatorSignin() {
         try {
             const response =await axios.post("http://localhost:3000/creator/signin", data);
             localStorage.setItem('token', response.data.token);
+            setSign(true);
+            setIni(response.data.name? response.data.name.charAt(0).toUpperCase():' ')
             nav('/');
         }
         catch (err) {
