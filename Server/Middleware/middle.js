@@ -51,3 +51,22 @@ export async function signupMiddleware(req, res, next) {
     req.body.password = hashed;
     next();
 }
+
+export async function passwordMiddleware(req, res, next) {
+    const requiredData = z.object({
+        newPassword: z
+            .string()
+            .min(3, { message: "New Password must be at least 3 characters long" })
+            .max(100, { message: "New Password cannot exceed 100 characters" })
+            .regex(/[A-Z]/, { message: "New Password must contain atleast one UpperCase Character" })
+            .regex(/[a-z]/, { message: "New Password must contain atleast one LowerCase Character" })
+            .regex(/[0-9]/, { message: "New Password must contain atleast one Digit" })
+            .regex(/[!@#$%^&*]/, { message: "New Password must contain atleast one Special Character (!@#$%^&*)" })
+    });
+    const safeData = requiredData.safeParse(req.body);
+    if (!safeData.success) {
+        const errorMessage = safeData.error.errors[0].message;
+        return res.status(400).json({ message: errorMessage });
+    }
+    next();
+}

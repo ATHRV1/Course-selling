@@ -9,7 +9,7 @@ import { useState } from "react";
 export default function Nav() {
     const sign = useAtomValue(CreatorSigninDone);
     const ini = useAtomValue(initialLetter);
-    const [showDropdown, setShowDropdown] = useState(true);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     return (
         <div className="flex fixed pt-4 shadow-md top-0 z-50 w-full bg-white  pb-2">

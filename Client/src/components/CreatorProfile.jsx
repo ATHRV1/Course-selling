@@ -3,22 +3,28 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { initialLetter } from "../../atoms/atom";
 import { useAtomValue } from "jotai";
-import { FiMail, FiSave } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiLock, FiMail, FiSave } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa";
 import { useEffect } from "react";
 import axios from "axios";
 
-
-
 export default function CreatorProfile() {
     const [profile, setProfile] = useState(true);
     const ini = useAtomValue(initialLetter);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [expertise, setExpertise] = useState('');
-    const [experience, setExperience] = useState('');
-    const [bio, setBio] = useState('');
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [expertise, setExpertise] = useState("");
+    const [experience, setExperience] = useState("");
+    const [bio, setBio] = useState("");
     const [success, setSuccess] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
+    const [changed, setChanged] = useState(false);
+    const [showPassword1, setShowPassword1] = useState(false);
+    const [showPassword2, setShowPassword2] = useState(false);
+    const [showPassword3, setShowPassword3] = useState(false);
 
     useEffect(() => {
         async function fetch() {
@@ -39,23 +45,61 @@ export default function CreatorProfile() {
 
     function handleSave() {
         const token = localStorage.getItem("token");
-        axios.post("http://localhost:3000/creator/update", {
-            username: name,
-            email: email,
-            expertise: expertise,
-            experience: experience,
-            bio: bio
-        }, {
-            headers: {
-                token: token,
-            },
-        })
-        .then(() => {
-            setSuccess(true);
-        })
-        .catch(error => {
-            console.error("There was an error updating the profile!", error);
-        });
+        axios
+            .post(
+                "http://localhost:3000/creator/update",
+                {
+                    username: name,
+                    email: email,
+                    expertise: expertise,
+                    experience: experience,
+                    bio: bio,
+                },
+                {
+                    headers: {
+                        token: token,
+                    },
+                }
+            )
+            .then(() => {
+                setSuccess(true);
+            })
+            .catch((error) => {
+                console.error("There was an error updating the profile!", error);
+            });
+    }
+
+    function handleSave2() {
+        if (newPassword !== confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+        const token = localStorage.getItem("token");
+        axios
+            .post(
+                "http://localhost:3000/creator/update-password",
+                {
+                    currentPassword: currentPassword,
+                    newPassword: newPassword,
+                },
+                {
+                    headers: {
+                        token: token,
+                    },
+                }
+            )
+            .then(() => {
+                setChanged(true);
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+                setError("");
+            })
+            .catch((error) => {
+                const errorMessage = error.response?.data?.message || "There was an error updating the password!";
+                setError(errorMessage);
+                setChanged(false);
+            });
     }
 
     return (
@@ -63,25 +107,40 @@ export default function CreatorProfile() {
             <div className="flex">
                 <div className="flex items-center gap-3 ml-60 mt-10">
                     <Link to="/creator/dashboard">
-                        <button
-                            className="p-2 cursor-pointer hover:bg-gray-100 rounded-lg transition-colors"
-                        >
+                        <button className="p-2 cursor-pointer hover:bg-gray-100 rounded-lg transition-colors">
                             <ArrowLeft className="w-6 h-6 text-gray-600" />
-                        </button></Link>
+                        </button>
+                    </Link>
                     <div>
-                        <h1 className="text-2xl font-semibold text-gray-900">Profile Settings</h1>
-                        <p className="text-md text-gray-500">Manage your account preferences</p>
+                        <h1 className="text-2xl font-semibold text-gray-900">
+                            Profile Settings
+                        </h1>
+                        <p className="text-md text-gray-500">
+                            Manage your account preferences
+                        </p>
                     </div>
                 </div>
             </div>
             <div className="flex">
                 <div className="bg-white p-4 w-40 ml-60 mt-10 rounded-xl flex-none h-25">
-                    <p className="hover:bg-gray-200 pl-2 mb-2 mt-1 text-lg h-7 pt-0.5 rounded-lg cursor-pointer" onClick={() => setProfile(true)}>Profile</p>
-                    <p className="hover:bg-gray-200 pl-2 h-7 text-lg pt-0.5 rounded-lg cursor-pointer" onClick={() => setProfile(false)}>Account</p>
+                    <p
+                        className="hover:bg-gray-200 pl-2 mb-2 mt-1 text-lg h-7 pt-0.5 rounded-lg cursor-pointer"
+                        onClick={() => setProfile(true)}
+                    >
+                        Profile
+                    </p>
+                    <p
+                        className="hover:bg-gray-200 pl-2 h-7 text-lg pt-0.5 rounded-lg cursor-pointer"
+                        onClick={() => setProfile(false)}
+                    >
+                        Account
+                    </p>
                 </div>
                 {profile ? (
                     <div className="bg-white ml-15 mt-10 rounded-xl pl-5 pr-6  py-5">
-                        <p className="text-black text-xl font-medium">Profile Information</p>
+                        <p className="text-black text-xl font-medium">
+                            Profile Information
+                        </p>
                         <div className="flex">
                             <div
                                 className=" cursor-pointer rounded-full  mt-10 bg-black text-white flex  justify-center font-semibold"
@@ -98,15 +157,11 @@ export default function CreatorProfile() {
                                 <h2 className="text-xl font-semibold">{name}</h2>
                                 <p className="text-gray-600">Instructor</p>
                             </div>
-
                         </div>
                         <div className="flex">
                             <div>
                                 <p className="mt-7 ml-2">Full Name</p>
-                                <div
-
-                                    className={`flex border-1 w-100 ml-2 mt-1 rounded-xl `}
-                                >
+                                <div className={`flex border-1 w-100 ml-2 mt-1 rounded-xl `}>
                                     <FaRegUser className="mt-3 ml-2" />
                                     <input
                                         type="text"
@@ -118,9 +173,7 @@ export default function CreatorProfile() {
                             </div>
                             <div className="mt-3">
                                 <p className="mt-4 ml-5">Email Address</p>
-                                <div
-                                    className={`flex border-1 w-100 ml-5 mt-1 rounded-xl`}
-                                >
+                                <div className={`flex border-1 w-100 ml-5 mt-1 rounded-xl`}>
                                     <FiMail className="mt-3 ml-2" />
                                     <input
                                         type="text"
@@ -139,7 +192,6 @@ export default function CreatorProfile() {
                                     value={expertise}
                                     onChange={(e) => setExpertise(e.target.value)}
                                     className="pl-2 w-100 ml-2 h-10 mt-1 border boorder-black rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none "
-
                                 >
                                     <option value="select">Select your Expertise</option>
                                     <option value="Development">Development</option>
@@ -159,7 +211,6 @@ export default function CreatorProfile() {
                                     value={experience}
                                     onChange={(e) => setExperience(e.target.value)}
                                     className=" p-2 w-100 ml-5 h-10 mt-1 border boorder-black rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none "
-
                                 >
                                     <option value="select">Select your Experience</option>
                                     <option value="1-2">1-2 years</option>
@@ -184,15 +235,112 @@ export default function CreatorProfile() {
                             className="flex ml-2 mt-5 cursor-pointer py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
                         >
                             <FiSave className=" h-5 w-5 mt-0.5 ml-2 text-white" />
-                            <p className=' ml-2 mr-2'>Save Changes</p>
+                            <p className=" ml-2 mr-2">Save Changes</p>
                         </button>
                         {success && (
-                            <p className="text-green-500 mt-2 ml-2">Profile updated successfully!</p>
+                            <p className="text-green-500 mt-2 ml-2">
+                                Profile updated successfully!
+                            </p>
                         )}
                     </div>
+                ) : (
+                    <>
+                        <div className="mt-10 rounded-xl pr-5 bg-white ml-5">
+                            <div>
+                                <p className="mt-4 ml-10">Current Password</p>
+                                <div className={`flex border-1 w-100 ml-10 mt-1 rounded-xl`}>
+                                    <FiLock className="mt-3 ml-2" />
+                                    <input
+                                        type={showPassword1 ? "text" : "password"}
+                                        placeholder="password"
+                                        className="h-10 ml-3 border-none outline-none focus:ring-0 focus:border-none w-87 "
+                                        value={currentPassword}
+                                        onChange={(e) => {
+                                            setCurrentPassword(e.target.value);
+                                        }}
+                                    />
+                                    <button
+                                        className="mr-2.5"
+                                        onClick={() => {
+                                            setShowPassword1((showPassword1) => !showPassword1);
+                                        }}
+                                    >
+                                        {showPassword1 ? <FiEyeOff /> : <FiEye />}
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <p className="mt-4 ml-10">New Password</p>
+                                <div className={`flex border-1 w-100 ml-10 mt-1 rounded-xl`}>
+                                    <FiLock className="mt-3 ml-2" />
+                                    <input
+                                        type={showPassword2 ? "text" : "password"}
+                                        placeholder="password"
+                                        className="h-10 ml-3 border-none outline-none focus:ring-0 focus:border-none w-87 "
+                                        value={newPassword}
+                                        onChange={(e) => {
+                                            setNewPassword(e.target.value);
+                                            if (e.target.value === confirmPassword) {
+                                                setError("");
+                                            }
+                                        }}
+                                    />
+                                    <button
+                                        className="mr-2.5"
+                                        onClick={() => {
+                                            setShowPassword2((showPassword2) => !showPassword2);
+                                        }}
+                                    >
+                                        {showPassword2 ? <FiEyeOff /> : <FiEye />}
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <p className="mt-4 ml-10">Confirm Password</p>
+                                <div className={`flex border-1 w-100 ml-10 mt-1 rounded-xl `}>
+                                    <FiLock className="mt-3 ml-2" />
+                                    <input
+                                        type={showPassword3 ? "text" : "password"}
+                                        placeholder="password"
+                                        className="h-10 ml-3 border-none outline-none focus:ring-0 focus:border-none w-87 "
+                                        value={confirmPassword}
+                                        onChange={(e) => {
+                                            const tt = e.target.value;
+                                            setConfirmPassword(tt);
 
-                ) : (<div> hello</div>)}
+                                            if (tt !== newPassword) {
+                                                setError("Passwords do not match");
+                                            } else {
+                                                setError("");
+                                            }
+                                        }}
+                                    />
+                                    <button
+                                        className="mr-2.5"
+                                        onClick={() => {
+                                            setShowPassword3((showPassword3) => !showPassword3);
+                                        }}
+                                    >
+                                        {showPassword3 ? <FiEyeOff /> : <FiEye />}
+                                    </button>
+                                </div>
+                                <div>
+                                    {error && <p className="text-red-500 mt-1 ml-10">{error}</p>}
+                                </div>
+                                <div>
+                                    {changed && <p className="text-green-500 mt-1 ml-10">Passwords Changed Succesfully</p>}
+                                </div>
+                                <button
+                                    onClick={handleSave2}
+                                    className="flex ml-10 mt-5 cursor-pointer py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                                >
+                                    <p className=" ml-2 mr-2">Update Password</p>
+                                </button>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
-        </div >
+        </div>
     );
 }

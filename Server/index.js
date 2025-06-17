@@ -2,7 +2,7 @@ import express from 'express'
 const app = express()
 import { UserModel, CreatorModel, RatingModel, CourseViewModel, EnrollmentModel, CourseModel } from "./db.js"
 import bcrypt from 'bcrypt'
-import { zodMiddleware, signupMiddleware, signinzodMiddleware } from "./Middleware/middle.js"
+import { zodMiddleware, signupMiddleware, signinzodMiddleware, passwordMiddleware } from "./Middleware/middle.js"
 import jwt from "jsonwebtoken"
 import mongoose from 'mongoose'
 
@@ -30,11 +30,10 @@ app.post("/user/signup", zodMiddleware, signupMiddleware, async (req, res) => {
                 message: "Creator with this email or username already exists"
             });
         }
-
         await UserModel.create({
             username: req.body.username,
             email: req.body.email,
-            password: req.body.password
+            password: req.body.password,
         });
 
         return res.status(201).json({
@@ -63,7 +62,6 @@ app.post("/creator/signup", zodMiddleware, signupMiddleware, async (req, res) =>
                 message: "User with this email or username already exists"
             });
         }
-
         await CreatorModel.create({
             username: req.body.username,
             email: req.body.email,
@@ -437,6 +435,42 @@ app.post("/creator/update", async (req, res) => {
     }
     catch (err) {
         console.error("Error updating profile:", err);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+})
+
+app.post("/creator/update-password", passwordMiddleware, async (req, res) => {
+    const token = req.headers.token;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+
+        const { currentPassword, newPassword } = req.body;
+
+        const creator = await CreatorModel.findById(id);
+        if (!creator) {
+            return res.status(404).json({
+                message: "Creator not found"
+            });
+        }
+
+        const match=await bcrypt.compare(currentPassword, creator.password);
+        if (!match) {
+            return res.status(401).json({
+                message: "Current password is incorrect"
+            });
+        }
+
+        creator.password = await bcrypt.hash(newPassword, 10);
+        await creator.save();
+        res.json({
+            message: "Password updated successfully"
+        });
+    }
+    catch (err) {
+        console.error("Error updating password:", err);
         res.status(500).json({
             message: "Internal server error"
         });
