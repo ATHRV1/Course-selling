@@ -479,23 +479,81 @@ app.post("/creator/update-password", passwordMiddleware, async (req, res) => {
 
 app.post("/creator/delete", async (req, res) => {
     const token = req.headers.token;
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const id = decoded.id;
+        const creatorId = decoded.id;
 
-        await CreatorModel.findByIdAndDelete(id);
-        await CourseModel.deleteMany({ creatorId: id });
-        await RatingModel.deleteMany({ creator: id });
+        // Step 1: Get all course IDs created by this creator
+        const courses = await CourseModel.find({ creatorId }, '_id').session(session);
+        const courseIds = courses.map(course => course._id);
+
+        // Step 2: Get all users enrolled in any of these courses
+        const enrolledUsers = await CourseModel.aggregate([
+            { $match: { _id: { $in: courseIds } } },
+            { $unwind: "$enrolledUsers" },
+            { $group: { _id: "$enrolledUsers" } }
+        ]).session(session);
+        const enrolledUserIds = enrolledUsers.map(user => user._id);
+
+        // Perform all deletions and updates in transaction
+        await Promise.all([
+            // Remove all creator's courses from enrolled users' courses arrays
+            UserModel.updateMany(
+                { _id: { $in: enrolledUserIds } },
+                { $pull: { courses: { $in: courseIds } } },
+                { session }
+            ),
+
+            // Delete all enrollments related to creator's courses
+            EnrollmentModel.deleteMany(
+                { creator: creatorId },
+                { session }
+            ),
+
+            // Delete all views related to creator's courses
+            CourseViewModel.deleteMany(
+                { creator: creatorId },
+                { session }
+            ),
+
+            // Delete all ratings related to creator's courses
+            RatingModel.deleteMany(
+                { creator: creatorId },
+                { session }
+            ),
+
+            // Delete all courses created by the creator
+            CourseModel.deleteMany(
+                { creatorId: creatorId },
+                { session }
+            ),
+
+            // Finally delete the creator account
+            CreatorModel.findByIdAndDelete(
+                creatorId,
+                { session }
+            )
+        ]);
+
+        await session.commitTransaction();
+        session.endSession();
+
         res.json({
-            message: "Account deleted successfully"
+            message: "Creator account and all related data deleted successfully"
         });
     }
     catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+        console.error("Error deleting creator account:", err);
         res.status(500).json({
             message: "Internal server error"
         });
     }
-})
+});
 
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`)

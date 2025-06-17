@@ -18,6 +18,7 @@ export default function Nav() {
         localStorage.removeItem("token");
         setSigninDone(false);
         setIni('');
+        setShowDropdown(false);
         nav("/creator/signup");
     }
     return (

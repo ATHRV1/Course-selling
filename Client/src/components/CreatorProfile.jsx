@@ -147,13 +147,13 @@ export default function CreatorProfile() {
                 <div className="flex">
                     <div className="bg-white p-4 w-40 ml-60 mt-10 rounded-xl flex-none h-25">
                         <p
-                            className="hover:bg-gray-200 pl-2 mb-2 mt-1 text-lg h-7 pt-0.5 rounded-lg cursor-pointer"
+                            className={`hover:bg-gray-200 pl-2 mb-2 mt-1 text-lg h-7 pt-0.5 rounded-lg cursor-pointer ${profile &&"bg-black text-white hover:bg-gray-900"}`}
                             onClick={() => setProfile(true)}
                         >
                             Profile
                         </p>
                         <p
-                            className="hover:bg-gray-200 pl-2 h-7 text-lg pt-0.5 rounded-lg cursor-pointer"
+                            className={`hover:bg-gray-200 pl-2 h-7 text-lg pt-0.5 rounded-lg cursor-pointer ${!profile && "bg-black text-white hover:bg-gray-900"}`}
                             onClick={() => setProfile(false)}
                         >
                             Account
