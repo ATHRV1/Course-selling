@@ -477,6 +477,26 @@ app.post("/creator/update-password", passwordMiddleware, async (req, res) => {
     }
 })
 
+app.post("/creator/delete", async (req, res) => {
+    const token = req.headers.token;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+
+        await CreatorModel.findByIdAndDelete(id);
+        await CourseModel.deleteMany({ creatorId: id });
+        await RatingModel.deleteMany({ creator: id });
+        res.json({
+            message: "Account deleted successfully"
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+})
+
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`)
 })

@@ -1,16 +1,25 @@
 import { IoBookOutline } from "react-icons/io5";
 import { BsCart } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiBell, FiSearch } from "react-icons/fi";
 import { CreatorSigninDone, initialLetter } from "../../atoms/atom";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
 export default function Nav() {
     const sign = useAtomValue(CreatorSigninDone);
     const ini = useAtomValue(initialLetter);
+    const setIni = useSetAtom(initialLetter);
     const [showDropdown, setShowDropdown] = useState(false);
+    const setSigninDone = useSetAtom(CreatorSigninDone);
+    const nav=useNavigate();
 
+    function LogOut() {
+        localStorage.removeItem("token");
+        setSigninDone(false);
+        setIni('');
+        nav("/creator/signup");
+    }
     return (
         <div className="flex fixed pt-4 shadow-md top-0 z-50 w-full bg-white  pb-2">
             <Link to="/">
@@ -71,7 +80,7 @@ export default function Nav() {
                                 </Link>
                                 <hr className="w-45 text-gray-300 mx-auto my-1" />
                                 <button
-                                    onClick={() => setShowDropdown(false)}
+                                    onClick={LogOut}
                                     className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                                 >
                                     Log Out
