@@ -22,7 +22,7 @@ export default function Nav() {
         nav("/creator/signup");
     }
     return (
-        <div className="flex fixed pt-4 shadow-md top-0 z-50 w-full bg-white  pb-2">
+        <div className="flex fixed pt-4 shadow-sm top-0 z-50 w-full bg-white  pb-3">
             <Link to="/">
                 <div className="flex ml-30 pt-1">
                     <IoBookOutline className="text-black w-10 h-10" />
