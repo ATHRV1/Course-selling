@@ -58,10 +58,9 @@ export default function CreateCourse() {
         description: description.trim(),
         category,
         level,
-        price: parseFloat(price), // Convert to number
+        price: parseFloat(price), 
         duration: duration.trim(),
-        image: image ? image.name : "", // Handle null image
-        isPublished: false // Use correct field name
+        isPublished: false 
       },{
         headers:{
           token:token

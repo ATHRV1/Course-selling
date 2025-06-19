@@ -90,21 +90,21 @@ export default function CreatorCourseView() {
                     <div className="w-135 ml-92 mt-10 ">
                         <div className="relative">
                             <img
-                                src={courseData.image || null}
+                                src={courseData.image? `http://localhost:3000${courseData.image}` : "http://localhost:3000/public/images/courses/course-d.png"}
                                 alt=""
-                                className="h-64 object-cover rounded-xl"
+                                className="h-64 w-150 rounded-xl"
                             />
                             {courseData.isPublished ? (
-                                <div className="absolute top-3 left-3">
-                                    <span className="bg-green-100 text-green-700 h-5 rounded-xl w-20 pl-1.5 text-sm font-medium">
+                                <div className="absolute top-3 left-2">
+                                    <div className="bg-green-100 text-green-700 h-5 rounded-xl w-18 pl-1 text-sm font-medium">
                                         Published
-                                    </span>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="absolute top-3 left-3">
-                                    <span className="bg-yellow-100 text-yellow-700 h-5 rounded-xl w-12 font-medium pl-1.5 text-sm">
+                                    <div className="bg-yellow-100 text-yellow-700 h-5 rounded-xl w-12 font-medium pl-1.5 text-sm">
                                         Draft
-                                    </span>
+                                    </div>
                                 </div>
                             )}
                         </div>

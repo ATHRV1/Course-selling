@@ -5,7 +5,7 @@ export default function CourseCard({ img, title, users, rating, revenue, publish
     return (
         <div className="bg-white ml-5 rounded-xl mt-5 h-20 flex w-161 border border-gray-200" >
             <div className="w-16 h-16 rounded-xl mt-2 ml-2">
-                <img src={img ? img : null} alt="" />
+                <img src={img? `http://localhost:3000${img}` :"http://localhost:3000/public/images/courses/course-d.png"} alt="" />
             </div>
             <div className="flex-1">
                 <p className="ml-2 mt-2 hover:underline w-fit cursor-pointer" onClick={onTitleClick}>{title}</p>
