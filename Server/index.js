@@ -607,7 +607,7 @@ app.get("/three/courses", async (req, res) => {
                     level: 1,
                     averageRating: 1,
                     totalRatings: 1,
-                    instructor: "$creatorDetails.name",
+                    instructor: "$creatorDetails.username",
                     enrolledCount: { $size: "$enrolledUsers" },
                 },
             },
