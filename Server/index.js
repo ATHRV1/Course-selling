@@ -558,6 +558,75 @@ app.post("/creator/delete", async (req, res) => {
     }
 });
 
+app.get("/three/courses", async (req, res) => {
+    try {
+        const topCourses = await RatingModel.aggregate([
+            {
+                $group: {
+                    _id: "$course",
+                    averageRating: { $avg: "$rating" },
+                    totalRatings: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { averageRating: -1, totalRatings: -1 }
+            },
+            {
+                $limit: 3
+            },
+            {
+                $lookup: {
+                    from: "courses", // collection name (usually plural)
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "courseDetails"
+                }
+            },
+            {
+                $unwind: "$courseDetails"
+            },
+            {
+                $lookup: {
+                    from: "creators", // populate creator info
+                    localField: "courseDetails.creatorId",
+                    foreignField: "_id",
+                    as: "creatorDetails"
+                }
+            },
+            {
+                $unwind: "$creatorDetails"
+            },
+            {
+                $project: {
+                    _id: "$courseDetails._id",
+                    title: "$courseDetails.title",
+                    description: "$courseDetails.description",
+                    image: "$courseDetails.image",
+                    price: "$courseDetails.price",
+                    duration: "$courseDetails.duration",
+                    category: "$courseDetails.category",
+                    level: "$courseDetails.level",
+                    averageRating: { $round: ["$averageRating", 1] },
+                    totalRatings: "$totalRatings",
+                    instructor: "$creatorDetails.name", // or username
+                    enrolledCount: { $size: "$courseDetails.enrolledUsers" }
+                }
+            }
+        ]);
+
+        res.json({
+            success: true,
+            courses: topCourses
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error fetching courses",
+            error: error.message
+        });
+    }
+});
+
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`)
 })

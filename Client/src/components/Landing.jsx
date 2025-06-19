@@ -1,7 +1,26 @@
+import { useEffect } from "react";
 import { BsFillStarFill } from "react-icons/bs";
 import { FiClock, FiUsers } from "react-icons/fi";
+import axios from 'axios';
 
 export default function Landing() {
+    useEffect(()=>{
+        async function fetch(){
+            try{
+                const res= await axios.get("http://localhost:3000/three/courses");
+            console.log(res);
+            }
+            catch(err){
+                console.log(err);
+            }
+        }
+        fetch();
+    },[])
+
+
+
+
+
     return (
         <div>
             <div>
@@ -39,7 +58,7 @@ export default function Landing() {
                 </div>
             </div>
             <p className="ml-160 text-3xl font-bold">Featured Courses</p>
-            <div className="rounded-xl bg-white w-95 ml-100 pb-6 mt-10">
+            <div className="rounded-xl bg-white w-95 ml-100 pb-6 mt-10 shadow-lg">
                 <img
                     src="http://localhost:3000/public/images/courses/course-d.png"
                     alt=""
@@ -48,7 +67,7 @@ export default function Landing() {
                 <div>
                     <p className="mt-5 ml-5 font-semibold text-lg">Course Title</p>
                     <p className="mt-1 ml-5 text-sm">By Creator Username</p>
-                    <div className="flex">
+                    <div className="flex mt-2">
                         <div className="flex">
                             <BsFillStarFill className="text-yellow-400 ml-5 mt-2" />
                             <p className="mt-0.5 ml-1">Rating</p>
@@ -63,14 +82,14 @@ export default function Landing() {
                         </div>
                     </div>
                     <div className="flex mt-5">
-                        <p className="text-xl text-black font-bold mt-2 ml-5">$Price</p>
+                        <p className="text-xl text-black font-bold mt-1 ml-5">$Price</p>
                         <button className=" bg-black text-lg text-white w-35 h-10 cursor-pointer rounded-lg ml-35">
                             Enroll now
                         </button>
                     </div>
                 </div>
             </div>
-            <div className="bg-black mt-10 pt-10 mb-10">
+            <div className="bg-black mt-15 pt-10 mb-10">
                 <p className="text-white ml-140 text-4xl font-bold">
                     Ready to Start Learning?
                 </p>
