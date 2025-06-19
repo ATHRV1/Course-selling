@@ -1,23 +1,22 @@
-import { useEffect } from "react";
-import { BsFillStarFill } from "react-icons/bs";
-import { FiClock, FiUsers } from "react-icons/fi";
+import { useEffect, useState } from "react";
 import axios from 'axios';
+import CourseLand from "./CourseLand";
 
 export default function Landing() {
-    useEffect(()=>{
-        async function fetch(){
-            try{
-                const res= await axios.get("http://localhost:3000/three/courses");
-            console.log(res);
+    const [courses, setCourses] = useState([]);
+    useEffect(() => {
+        async function fetch() {
+            try {
+                const res = await axios.get("http://localhost:3000/three/courses");
+                setCourses(res.data.courses);
+
             }
-            catch(err){
+            catch (err) {
                 console.log(err);
             }
         }
         fetch();
-    },[])
-
-
+    }, [])
 
 
 
@@ -58,37 +57,12 @@ export default function Landing() {
                 </div>
             </div>
             <p className="ml-160 text-3xl font-bold">Featured Courses</p>
-            <div className="rounded-xl bg-white w-95 ml-100 pb-6 mt-10 shadow-lg">
-                <img
-                    src="http://localhost:3000/public/images/courses/course-d.png"
-                    alt=""
-                    className="h-55 w-95 rounded-xl "
-                />
-                <div>
-                    <p className="mt-5 ml-5 font-semibold text-lg">Course Title</p>
-                    <p className="mt-1 ml-5 text-sm">By Creator Username</p>
-                    <div className="flex mt-2">
-                        <div className="flex">
-                            <BsFillStarFill className="text-yellow-400 ml-5 mt-2" />
-                            <p className="mt-0.5 ml-1">Rating</p>
-                        </div>
-                        <div className="flex">
-                            <FiUsers className="text-gray-500 ml-5 mt-2" />
-                            <p className="mt-0.5 ml-1">Users</p>
-                        </div>
-                        <div className="flex">
-                            <FiClock className="text-gray-500 ml-5 mt-2" />
-                            <p className="mt-0.5 ml-1">Time</p>
-                        </div>
-                    </div>
-                    <div className="flex mt-5">
-                        <p className="text-xl text-black font-bold mt-1 ml-5">$Price</p>
-                        <button className=" bg-black text-lg text-white w-35 h-10 cursor-pointer rounded-lg ml-35">
-                            Enroll now
-                        </button>
-                    </div>
-                </div>
+            <div className="flex pl-8">
+                {courses.map((course) =>
+                    <CourseLand key={course._id} title={course.title} creator={course.instructor} rating={course.averageRating} users={course.enrolledCount} duration={course.duration} price={course.price} />
+                )}
             </div>
+
             <div className="bg-black mt-15 pt-10 mb-10">
                 <p className="text-white ml-140 text-4xl font-bold">
                     Ready to Start Learning?
