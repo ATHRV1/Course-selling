@@ -27,7 +27,7 @@ export default function CreatorSignin() {
             localStorage.setItem('token', response.data.token);
             setSign(true);
             setIni(response.data.name? response.data.name.charAt(0).toUpperCase():' ')
-            nav('/');
+            nav('/creator/landing');
         }
         catch (err) {
             if (err.response) {

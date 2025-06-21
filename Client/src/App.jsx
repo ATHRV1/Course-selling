@@ -12,6 +12,7 @@ import CreatorCourseView from './components/CreatorCourseView';
 import EditCourse from './components/EditCourse';
 import CreatorProfile from './components/CreatorProfile';
 import Landing from './components/Landing';
+import CreatorLanding from './components/CreatorLanding';
 
 
 
@@ -32,6 +33,7 @@ function App() {
             <Route path="/edit/course" element={<EditCourse />} />
             <Route path="/creator/profile" element={<CreatorProfile />} />
             <Route path="/" element={<Landing />} />
+            <Route path="/creator/landing" element={<CreatorLanding />} />
             {/* You can add more routes here */}
           </Routes>
         </div>

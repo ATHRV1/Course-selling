@@ -23,7 +23,7 @@ export default function Nav() {
     }
     return (
         <div className="flex fixed pt-4 shadow-sm top-0 z-50 w-full bg-white  pb-3">
-            <Link to="/">
+            <Link to={sign? "/creator/landing":"/"}>
                 <div className="flex ml-30 pt-1">
                     <IoBookOutline className="text-black w-10 h-10" />
                     <h1 className="ml-2 text-2xl font-bold">Gyaanquest</h1>
