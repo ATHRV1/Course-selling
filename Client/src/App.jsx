@@ -34,6 +34,7 @@ function App() {
             <Route path="/creator/profile" element={<CreatorProfile />} />
             <Route path="/" element={<Landing />} />
             <Route path="/creator/landing" element={<CreatorLanding />} />
+            <Route path="/creator/landing" element={<CreatorLanding />} />
             {/* You can add more routes here */}
           </Routes>
         </div>

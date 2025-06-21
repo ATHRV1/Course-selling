@@ -3,6 +3,8 @@ import { FiLock } from "react-icons/fi";
 import { useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from 'react-router-dom';
+import {Usersignin} from '../../atoms/atom';
+import { useSetAtom } from "jotai";
 
 export default function UserSignin() {
     const nav = useNavigate();
@@ -14,12 +16,14 @@ export default function UserSignin() {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
+    const setter=useSetAtom(Usersignin);
 
 
     async function submit() {
         try {
             const response = await axios.post("http://localhost:3000/user/signin", data);
             localStorage.setItem('token', response.data.token);
+            setter(true);
             nav('/');
         }
         catch (err) {

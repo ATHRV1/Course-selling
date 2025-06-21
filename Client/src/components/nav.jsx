@@ -2,13 +2,14 @@ import { IoBookOutline } from "react-icons/io5";
 import { BsCart } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { FiBell, FiSearch } from "react-icons/fi";
-import { CreatorSigninDone, initialLetter } from "../../atoms/atom";
+import { CreatorSigninDone, initialLetter, Usersignin } from "../../atoms/atom";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
 export default function Nav() {
     const sign = useAtomValue(CreatorSigninDone);
     const ini = useAtomValue(initialLetter);
+    const user=useAtomValue(Usersignin);
     const setIni = useSetAtom(initialLetter);
     const [showDropdown, setShowDropdown] = useState(false);
     const setSigninDone = useSetAtom(CreatorSigninDone);
@@ -23,7 +24,7 @@ export default function Nav() {
     }
     return (
         <div className="flex fixed pt-4 shadow-sm top-0 z-50 w-full bg-white  pb-3">
-            <Link to={sign? "/creator/landing":"/"}>
+            <Link to={sign ? "creator/landing" : (user ? "/user/landing" : "/")}>
                 <div className="flex ml-30 pt-1">
                     <IoBookOutline className="text-black w-10 h-10" />
                     <h1 className="ml-2 text-2xl font-bold">Gyaanquest</h1>
