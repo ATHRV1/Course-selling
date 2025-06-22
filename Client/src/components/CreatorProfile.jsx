@@ -30,6 +30,7 @@ export default function CreatorProfile() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const setSigninDone = useSetAtom(CreatorSigninDone);
     const [deleteError, setDeleteError] = useState("");
+    const setInitial = useSetAtom(initialLetter);
 
     useEffect(() => {
         async function fetch() {
@@ -117,7 +118,8 @@ export default function CreatorProfile() {
             localStorage.removeItem("token");
             
             setSigninDone(false);
-            nav("/creator/signup");
+            setInitial('');
+            nav("/");
         }
         catch(err){
             setDeleteError(err.response?.data?.message||"There was an error deleting the account!");

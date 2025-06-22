@@ -7,7 +7,7 @@ import { FiEye, FiEyeOff, FiLock, FiMail, FiSave } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa";
 import { useEffect } from "react";
 import axios from "axios";
-import { Usersignin } from "../../atoms/atom";
+import { Usersignin} from "../../atoms/atom";
 
 export default function UserProfile() {
     const nav = useNavigate();
@@ -27,6 +27,7 @@ export default function UserProfile() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const setSigninDone = useSetAtom(Usersignin);
     const [deleteError, setDeleteError] = useState("");
+    const setInitial=useSetAtom(UserIni);
 
     useEffect(() => {
         async function fetch() {
@@ -101,7 +102,7 @@ export default function UserProfile() {
     async function handleDelete() {
         const token = localStorage.getItem("token");
         try {
-            await axios.post("http://localhost:3000/creator/delete",{}, {
+            await axios.post("http://localhost:3000/user/delete",{}, {
                 headers: {
                     token: token,
                 },
@@ -109,7 +110,8 @@ export default function UserProfile() {
             localStorage.removeItem("token");
             
             setSigninDone(false);
-            nav("/creator/signup");
+            setInitial('');
+            nav("/");
         }
         catch(err){
             setDeleteError(err.response?.data?.message||"There was an error deleting the account!");

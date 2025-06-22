@@ -730,6 +730,57 @@ app.post("/user/update-password", passwordMiddleware, async (req, res) => {
     }
 });
 
+app.post("/user/delete", async (req, res) => {
+    const token = req.headers.token;
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+
+        // Step 1: Get all course IDs the user is enrolled in
+        const user = await UserModel.findById(userId).session(session);
+        const courseIds = user.courses || [];
+
+        // Step 2: Remove user from enrolledUsers array in all courses they're enrolled in
+        await Promise.all([
+            // Remove user from courses' enrolledUsers arrays
+            CourseModel.updateMany(
+                { _id: { $in: courseIds } },
+                { $pull: { enrolledUsers: userId } },
+                { session }
+            ),
+            
+            // Delete all enrollments for this user
+            EnrollmentModel.deleteMany({ student: userId }, { session }),
+            
+            // Delete all course views by this user
+            CourseViewModel.deleteMany({ studentId: userId }, { session }),
+            
+            // Delete all ratings/reviews by this user
+            RatingModel.deleteMany({ student: userId }, { session }),
+            
+            // Finally delete the user
+            UserModel.findByIdAndDelete(userId, { session })
+        ]);
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.json({
+            message: "User account and all related data deleted successfully",
+        });
+    } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+        console.error("Error deleting user account:", err);
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+});
+
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`);
 });
