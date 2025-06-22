@@ -114,6 +114,7 @@ app.post("/user/signin", signinzodMiddleware, async (req, res) => {
             );
             res.json({
                 token: token,
+                username:auth.username,
             });
         }
     } else {
@@ -624,6 +625,26 @@ app.get("/three/courses", async (req, res) => {
         });
     }
 });
+
+app.post("/user/info", async(req,res)=>{
+    const token=req.headers.token;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+
+        const auth = await UserModel.findOne({ _id: id });
+
+        res.json({
+            username: auth.username,
+            email: auth.email,
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "Internal Network error",
+        });
+    }
+
+})
 
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`);
