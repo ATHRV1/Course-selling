@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import CourseLand from "./CourseLand";
+import {useNavigate} from 'react-router-dom';
 
 export default function Landing() {
+    const nav=useNavigate();
     const [courses, setCourses] = useState([]);
     useEffect(() => {
         async function fetch() {
@@ -35,10 +37,10 @@ export default function Landing() {
                 </p>
             </div>
             <div className="flex ml-145 mt-8">
-                <button className="bg-black text-white px-4 py-2 rounded-lg w-45 text-lg font-medium h-15 hover:bg-white hover:text-black cursor-pointer hover:border-2 hover:border-black">
+                <button onClick={()=>nav('/all/courses')} className="bg-black text-white px-4 py-2 rounded-lg w-45 text-lg font-medium h-15 hover:bg-white hover:text-black cursor-pointer hover:border-2 hover:border-black">
                     Explore Courses
                 </button>
-                <button className="bg-white text-black px-4 py-2 rounded-lg w-45 text-lg font-medium h-15 ml-4 border-2 border-black cursor-pointer hover:bg-black hover:text-white">
+                <button onClick={()=>nav('/creator/signup')} className="bg-white text-black px-4 py-2 rounded-lg w-45 text-lg font-medium h-15 ml-4 border-2 border-black cursor-pointer hover:bg-black hover:text-white">
                     Start Teaching
                 </button>
             </div>
@@ -72,7 +74,7 @@ export default function Landing() {
                     with our
                 </p>
                 <p className="text-gray-300 ml-175 text-xl">expert-led courses.</p>
-                <button className="bg-white text-black px-4 py-2 rounded-lg w-55 text-lg font-medium h-15 ml-168 mt-10 mb-15 border-2 cursor-pointer hover:bg-gray-100">
+                <button onClick={()=>nav('/all/courses')} className="bg-white text-black px-4 py-2 rounded-lg w-55 text-lg font-medium h-15 ml-168 mt-10 mb-15 border-2 cursor-pointer hover:bg-gray-100">
                     Browse All Courses
                 </button>
             </div>

@@ -781,6 +781,59 @@ app.post("/user/delete", async (req, res) => {
     }
 });
 
+app.get("/courses/all", async (req, res) => {
+    try {
+        const courses = await CourseModel.aggregate([
+            // Step 1: Join with Creator collection
+            {
+                $lookup: {
+                    from: "creators",
+                    localField: "creatorId",
+                    foreignField: "_id",
+                    as: "creatorDetails"
+                }
+            },
+            { $unwind: "$creatorDetails" }, 
+            
+            // Step 2: Join with Ratings collection
+            {
+                $lookup: {
+                    from: "ratings",
+                    localField: "_id",
+                    foreignField: "course",
+                    as: "courseRatings"
+                }
+            },
+            
+            // Step 3: Shape the output
+            {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    image: 1,
+                    category: 1,
+                    level: 1,
+                    price: 1,
+                    duration: 1,
+                    isPublished: 1,
+                    createdAt: 1,
+                    creatorName: "$creatorDetails.username", 
+                    totalEnrolled: { $size: "$enrolledUsers" },
+                    averageRating: { 
+                        $ifNull: [{ $avg: "$courseRatings.rating" }, 0] 
+                    }
+                }
+            },
+            { $match: { isPublished: true } }
+        ]);
+
+        res.json(courses);
+    } catch (err) {
+        console.error("Error fetching courses:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`);
 });
