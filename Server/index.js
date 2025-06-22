@@ -114,7 +114,7 @@ app.post("/user/signin", signinzodMiddleware, async (req, res) => {
             );
             res.json({
                 token: token,
-                username:auth.username,
+                username: auth.username,
             });
         }
     } else {
@@ -626,25 +626,49 @@ app.get("/three/courses", async (req, res) => {
     }
 });
 
-app.post("/user/info", async(req,res)=>{
-    const token=req.headers.token;
+
+app.post("/user/info", async (req, res) => {
+    const token = req.headers.token;
+
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const id = decoded.id;
+        const userId = decoded.id;
 
-        const auth = await UserModel.findOne({ _id: id });
+        const user = await UserModel.findOne({ _id: userId })
+            .populate({
+                path: "courses",
+                options: { limit: 3 },
+                select:
+                    "title description image price duration category level creatorId",
+            })
+            .select("username courses");
+
+        const formattedCourses =
+            user?.courses?.map((course) => ({
+                _id: course._id,
+                title: course.title,
+                image: course.image,
+                category: course.category,
+                level: course.level,
+            })) || [];
 
         res.json({
-            username: auth.username,
-            email: auth.email,
+            username: user.username,
+            courses: formattedCourses,
         });
-    } catch (err) {
+    } catch (error) {
+        console.error("Error fetching user courses:", error);
+
+        if (error.name === "JsonWebTokenError") {
+            return res.status(401).json({ success: false, message: "Invalid user" });
+        }
+
         res.status(500).json({
-            message: "Internal Network error",
+            success: false,
+            message: "Internal server error",
         });
     }
-
-})
+});
 
 app.listen(process.env.PORT, () => {
     console.log(`app listening on port ${process.env.PORT}`);
