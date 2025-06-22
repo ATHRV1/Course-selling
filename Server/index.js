@@ -641,7 +641,7 @@ app.post("/user/info", async (req, res) => {
                 select:
                     "title description image price duration category level creatorId",
             })
-            .select("username courses");
+            .select("username email courses");
 
         const formattedCourses =
             user?.courses?.map((course) => ({
@@ -654,6 +654,7 @@ app.post("/user/info", async (req, res) => {
 
         res.json({
             username: user.username,
+            email:user.email,
             courses: formattedCourses,
         });
     } catch (error) {
@@ -665,6 +666,65 @@ app.post("/user/info", async (req, res) => {
 
         res.status(500).json({
             success: false,
+            message: "Internal server error",
+        });
+    }
+});
+
+app.post("/user/update", async (req, res) => {
+    const token = req.headers.token;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+
+        const { username, email} = req.body;
+
+        await UserModel.findByIdAndUpdate(id, {
+            username: username,
+            email: email,
+        });
+
+        res.json({
+            message: "Profile updated successfully",
+        });
+    } catch (err) {
+        console.error("Error updating profile:", err);
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+});
+
+app.post("/user/update-password", passwordMiddleware, async (req, res) => {
+    const token = req.headers.token;
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+
+        const { currentPassword, newPassword } = req.body;
+
+        const creator = await UserModel.findById(id);
+        if (!creator) {
+            return res.status(404).json({
+                message: "Creator not found",
+            });
+        }
+
+        const match = await bcrypt.compare(currentPassword, creator.password);
+        if (!match) {
+            return res.status(401).json({
+                message: "Current password is incorrect",
+            });
+        }
+
+        creator.password = await bcrypt.hash(newPassword, 10);
+        await creator.save();
+        res.json({
+            message: "Password updated successfully",
+        });
+    } catch (err) {
+        console.error("Error updating password:", err);
+        res.status(500).json({
             message: "Internal server error",
         });
     }

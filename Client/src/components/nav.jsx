@@ -120,20 +120,12 @@ export default function Nav() {
                         </div>
                         {showDropdownUser && (
                             <div className="absolute right-70 mt-12 w-48 bg-white rounded-xl shadow-lg py-2.5 z-50">
-                                <Link to="/creator/profile">
+                                <Link to="/user/profile">
                                     <button
                                         onClick={() => setShowDropdownUser(false)}
                                         className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                                     >
                                         Profile
-                                    </button>
-                                </Link>
-                                <Link to="/creator/dashboard">
-                                    <button
-                                        onClick={() => setShowDropdownUser(false)}
-                                        className="cursor-pointer block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                    >
-                                        Dashboard
                                     </button>
                                 </Link>
                                 <hr className="w-45 text-gray-300 mx-auto my-1" />

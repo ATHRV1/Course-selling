@@ -14,7 +14,7 @@ import CreatorProfile from './components/CreatorProfile';
 import Landing from './components/Landing';
 import CreatorLanding from './components/CreatorLanding';
 import UserLanding from './components/UserLanding';
-
+import UserProfile from './components/UserProfile';
 
 
 function App() {
@@ -36,6 +36,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/creator/landing" element={<CreatorLanding />} />
             <Route path="/user/landing" element={<UserLanding />} />
+            <Route path="/user/profile" element={<UserProfile />} />
             {/* You can add more routes here */}
           </Routes>
         </div>
