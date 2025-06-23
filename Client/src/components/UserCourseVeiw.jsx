@@ -4,13 +4,14 @@ import { Usersignin } from "../../atoms/atom";
 import { useAtomValue } from "jotai";
 import axios from 'axios';
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function UserCourseView() {
     const location = useLocation();
     const courseData = location.state?.course;
     const isSignedin = useAtomValue(Usersignin);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+    const nav=useNavigate();
 
     if (!isSignedin) {
         return (
@@ -28,7 +29,7 @@ export default function UserCourseView() {
                 const token = localStorage.getItem('token'); 
                 const response = await axios.post('http://localhost:3000/enroll/course', {
                     token,
-                    courseId: courseData._id
+                    courseId: courseData.courseId,
                 });
                 if (response.data.success) {
                     setShowSuccessModal(true);
@@ -39,6 +40,7 @@ export default function UserCourseView() {
         }
         function close(){
             setShowSuccessModal(false);
+            nav("/user/landing");
         }
         return (
             <div className="mb-20">
@@ -121,7 +123,7 @@ export default function UserCourseView() {
                                         </svg>
                                     </div>
                                     <div className="text-2xl font-bold text-gray-900">
-                                        {courseData.averageRating.$numberDecimal}
+                                        {courseData.averageRating}
                                     </div>
                                     <div className="text-sm text-gray-500">Rating</div>
                                 </div>
@@ -159,7 +161,7 @@ export default function UserCourseView() {
 
                                 <div className="flex justify-between items-center">
                                     <span className="text-gray-600 text-sm">Average rating</span>
-                                    <span className="font-semibold text-gray-900">{courseData.averageRating.$numberDecimal}/5</span>
+                                    <span className="font-semibold text-gray-900">{courseData.averageRating}/5</span>
                                 </div>
 
                                 <div className="flex justify-between items-center">

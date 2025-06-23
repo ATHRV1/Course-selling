@@ -32,9 +32,18 @@ export default function AllCourses() {
     return (
         <div>
             <p className="text-2xl font-bold ml-30 mt-10">All Courses</p>
-            <div className="flex pl-8 pb-20">
+            <div className="grid grid-cols-3 gap-x-0 gap-y-8 pl-29 pb-20">
                 {courses.map((course) =>
-                    <CourseLand key={course._id} enroll={() => nav("/user/course/view", {state: { course: course }})}  title={course.title} creator={course.instructor} rating={course.averageRating} users={course.totalEnrolled} duration={course.duration} price={course.price} />
+                    <CourseLand 
+                        key={course.courseId} 
+                        enroll={() => nav("/user/course/view", {state: { course: course }})}  
+                        title={course.title} 
+                        creator={course.creatorName} 
+                        rating={course.averageRating} 
+                        users={course.totalEnrolled} 
+                        duration={course.duration} 
+                        price={course.price} 
+                    />
                 )}
             </div>
         </div>

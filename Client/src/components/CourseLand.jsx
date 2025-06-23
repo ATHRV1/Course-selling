@@ -11,7 +11,7 @@ export default function CourseLand({title, creator,rating,users,duration,price,e
 
     const formattedRating = getValue(rating);
     return(
-        <div className="rounded-xl bg-white w-95 ml-20 pb-6 mt-10 shadow-lg">
+        <div className="rounded-xl bg-white w-95 pb-6 mt-10 shadow-lg">
                 <img
                     src="http://localhost:3000/public/images/courses/course-d.png"
                     alt=""

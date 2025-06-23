@@ -59,7 +59,7 @@ export default function Landing() {
                 </div>
             </div>
             <p className="ml-160 text-3xl font-bold">Featured Courses</p>
-            <div className="flex pl-8">
+            <div className="flex pl-25 gap-20">
                 {courses.map((course) =>
                     <CourseLand enroll={() => nav("/user/course/view", {state: { course: course }})} key={course._id} title={course.title} creator={course.instructor} rating={course.averageRating} users={course.enrolledCount} duration={course.duration} price={course.price} />
                 )}

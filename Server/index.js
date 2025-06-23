@@ -783,52 +783,58 @@ app.post("/user/delete", async (req, res) => {
 
 app.get("/courses/all", async (req, res) => {
     try {
-        const courses = await CourseModel.aggregate([
-            // Step 1: Join with Creator collection
-            {
-                $lookup: {
-                    from: "creators",
-                    localField: "creatorId",
-                    foreignField: "_id",
-                    as: "creatorDetails"
+        const token = req.headers.token;
+        let enrolledCourseIds = [];
+        
+        // If token exists, get user's enrolled courses
+        if (token) {
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                const user = await UserModel.findById(decoded.id); // ✅ This was correct
+                if (user && user.courses) { // ✅ Fixed: use 'courses' not 'enrolledCourses'
+                    enrolledCourseIds = user.courses; // ✅ Fixed: use 'courses' not 'enrolledCourses'
                 }
-            },
-            { $unwind: "$creatorDetails" }, 
-            
-            // Step 2: Join with Ratings collection
-            {
-                $lookup: {
-                    from: "ratings",
-                    localField: "_id",
-                    foreignField: "course",
-                    as: "courseRatings"
-                }
-            },
-            
-            // Step 3: Shape the output
-            {
-                $project: {
-                    courseId:"$_id",
-                    title: 1,
-                    description: 1,
-                    image: 1,
-                    category: 1,
-                    level: 1,
-                    price: 1,
-                    duration: 1,
-                    isPublished: 1,
-                    createdAt: 1,
-                    creatorName: "$creatorDetails.username", 
-                    totalEnrolled: { $size: "$enrolledUsers" || 0 },
-                    averageRating: { 
-                        $ifNull: [{ $avg: "$courseRatings.rating" }, 0] 
-                    }
-                }
-            },
-            { $match: { isPublished: true } }
-        ]);
+            } catch (err) {
+                console.log("Invalid token");
+            }
+        }
 
-        res.json(courses);
+        // Get all published courses
+        const allCourses = await CourseModel.find({ isPublished: true })
+            .populate('creatorId', 'username')
+            .lean();
+
+        // Filter out enrolled courses
+        const availableCourses = allCourses.filter(course => 
+            !enrolledCourseIds.some(enrolledId => enrolledId.toString() === course._id.toString())
+        );
+
+        // Format the response
+        const formattedCourses = await Promise.all(
+            availableCourses.map(async (course) => {
+                // Get ratings for this course
+                const ratings = await RatingModel.find({ course: course._id });
+                const averageRating = ratings.length > 0 
+                    ? ratings.reduce((sum, rating) => sum + rating.rating, 0) / ratings.length 
+                    : 0;
+
+                return {
+                    courseId: course._id,
+                    title: course.title,
+                    description: course.description,
+                    image: course.image,
+                    category: course.category,
+                    level: course.level,
+                    price: course.price,
+                    duration: course.duration,
+                    creatorName: course.creatorId.username,
+                    totalEnrolled: course.enrolledUsers ? course.enrolledUsers.length : 0,
+                    averageRating: averageRating
+                };
+            })
+        );
+
+        res.json(formattedCourses);
     } catch (err) {
         console.error("Error fetching courses:", err);
         res.status(500).json({ message: "Internal server error" });
