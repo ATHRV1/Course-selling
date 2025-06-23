@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CourseLandUser from "./CourseLandUser";
+import { useNavigate } from "react-router-dom";
 
 
 export default function UserLanding() {
     const [username, setUsername] = useState("");
     const [courses, setCourses] = useState([]);
+    const nav=useNavigate();
 
     useEffect(() => {
         async function fetch() {
@@ -43,10 +45,10 @@ export default function UserLanding() {
             <div className="bg-white pl-45 py-20">
                 <p className="text-2xl font-medium">Browse Courses</p>
                 <div className="flex mt-5">
-                    <div className="bg-gray-100 h-15 w-70 rounded-xl py-3.75 pl-14 text-lg hover:bg-gray-200 cursor-pointer">Web Developement</div>
-                    <div className="bg-gray-100 h-15 w-70 ml-4.5 rounded-xl py-3.75 pl-21 text-lg hover:bg-gray-200 cursor-pointer">Data Science</div>
-                    <div className="bg-gray-100 h-15 w-70 ml-4.5 rounded-xl py-3.75 pl-27 text-lg hover:bg-gray-200 cursor-pointer">Design</div>
-                    <div className="bg-gray-100 h-15 w-70 ml-4.5 rounded-xl py-3.75 pl-22 text-lg hover:bg-gray-200 cursor-pointer">Marketing</div>
+                    <div onClick={()=>nav('/all/courses')} className="bg-gray-100 h-15 w-70 rounded-xl py-3.75 pl-14 text-lg hover:bg-gray-200 cursor-pointer">Web Developement</div>
+                    <div onClick={()=>nav('/all/courses')} className="bg-gray-100 h-15 w-70 ml-4.5 rounded-xl py-3.75 pl-21 text-lg hover:bg-gray-200 cursor-pointer">Data Science</div>
+                    <div onClick={()=>nav('/all/courses')} className="bg-gray-100 h-15 w-70 ml-4.5 rounded-xl py-3.75 pl-27 text-lg hover:bg-gray-200 cursor-pointer">Design</div>
+                    <div onClick={()=>nav('/all/courses')} className="bg-gray-100 h-15 w-70 ml-4.5 rounded-xl py-3.75 pl-22 text-lg hover:bg-gray-200 cursor-pointer">Marketing</div>
                 </div>
             </div>
         </div>
