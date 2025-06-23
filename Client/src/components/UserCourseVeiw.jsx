@@ -1,11 +1,17 @@
 import { FiArrowLeft } from "react-icons/fi";
 import { Link, useLocation} from "react-router-dom";
+import { Usersignin } from "../../atoms/atom";
+import { useAtomValue } from "jotai";
 
 export default function UserCourseView() {
     const location = useLocation();
     const courseData = location.state?.course;
-
-
+    const isSignedin=useAtomValue(Usersignin);
+    if(!isSignedin){
+        return (
+            <div className="ml-170 mt-10 text-2xl text-red-500">You are not signed in</div>
+        );
+    }
 
     if (!courseData) {
         return (
@@ -65,17 +71,17 @@ export default function UserCourseView() {
                                     <div className="text-sm text-gray-500">Students</div>
                                 </div>
 
-                                {/* <div className="text-center">
+                                <div className="text-center">
                                     <div className="flex justify-center mb-2">
                                         <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                                         </svg>
                                     </div>
                                     <div className="text-2xl font-bold text-gray-900">
-                                        {courseData.averageRating}
+                                        {courseData.averageRating.$numberDecimal}
                                     </div>
                                     <div className="text-sm text-gray-500">Rating</div>
-                                </div> */}
+                                </div>
 
                                 {/* Duration */}
                                 <div className="text-center">
@@ -114,10 +120,10 @@ export default function UserCourseView() {
                                     <span className="font-semibold text-gray-900">{courseData.totalEnrolled}</span>
                                 </div>
 
-                                {/* <div className="flex justify-between items-center">
+                                <div className="flex justify-between items-center">
                                     <span className="text-gray-600 text-sm">Average rating</span>
-                                    <span className="font-semibold text-gray-900">{courseData.averageRating}/5</span>
-                                </div> */}
+                                    <span className="font-semibold text-gray-900">{courseData.averageRating.$numberDecimal}/5</span>
+                                </div>
 
                                 <div className="flex justify-between items-center">
                                     <span className="text-gray-600 text-sm">Last updated</span>
