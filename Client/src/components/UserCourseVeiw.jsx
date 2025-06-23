@@ -3,11 +3,15 @@ import { Link, useLocation } from "react-router-dom";
 import { Usersignin } from "../../atoms/atom";
 import { useAtomValue } from "jotai";
 import axios from 'axios';
+import { useState } from "react";
 
 export default function UserCourseView() {
     const location = useLocation();
     const courseData = location.state?.course;
     const isSignedin = useAtomValue(Usersignin);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+
     if (!isSignedin) {
         return (
             <div className="ml-170 mt-10 text-2xl text-red-500">You are not signed in</div>
@@ -19,7 +23,6 @@ export default function UserCourseView() {
             <div className="ml-170 mt-10 text-2xl text-red-500">Course not found</div>
         );
     } else {
-        console.log(courseData);
         async function enroll() {
             try {
                 const token = localStorage.getItem('token'); 
@@ -27,13 +30,40 @@ export default function UserCourseView() {
                     token,
                     courseId: courseData._id
                 });
-                console.log(response.data.message);
+                if (response.data.success) {
+                    setShowSuccessModal(true);
+                }
             } catch (error) {
                 console.error(error.response?.data?.message || 'Enrollment failed');
             }
         }
+        function close(){
+            setShowSuccessModal(false);
+        }
         return (
             <div className="mb-20">
+                 {showSuccessModal && (
+                    <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center">
+                        <div className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl">
+                            <div className="mb-6">
+                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-2xl font-bold text-gray-900 mb-2">Congratulations!</h2>
+                                <p className="text-gray-600">You have successfully enrolled for this course</p>
+                            </div>
+                            <button 
+                                onClick={close}
+                                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors cursor-pointer"
+                            >
+                                Continue
+                            </button>
+                        </div>
+                    </div>
+                )}
+
                 <div className="flex ml-90 mt-5">
                     <Link to="/all/courses">
                         <div className="flex text-gray-700">
