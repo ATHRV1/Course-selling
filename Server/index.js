@@ -808,6 +808,7 @@ app.get("/courses/all", async (req, res) => {
             // Step 3: Shape the output
             {
                 $project: {
+                    courseId:"$_id",
                     title: 1,
                     description: 1,
                     image: 1,
@@ -831,6 +832,55 @@ app.get("/courses/all", async (req, res) => {
     } catch (err) {
         console.error("Error fetching courses:", err);
         res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post("/enroll/course", async (req, res) => {
+    try {
+        const { token, courseId } = req.body;
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+
+        await UserModel.findByIdAndUpdate(
+            userId,
+            { $addToSet: { courses: courseId } }
+        );
+
+        const course = await CourseModel.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: "Course not found" });
+        }
+
+        await EnrollmentModel.create({
+            student: userId,
+            course: courseId,
+            creator: course.creatorId,
+            price: course.price,
+            status: 'active'
+        });
+
+        await CourseModel.findByIdAndUpdate(
+            courseId,
+            { 
+                $addToSet: { enrolledUsers: userId },
+            }
+        );
+
+        res.json({ 
+            success: true,
+            message: "Successfully enrolled in course" 
+        });
+
+    } catch (err) {
+        console.error("Enrollment error:", err);
+        if (err.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: "Invalid token" });
+        }
+        res.status(500).json({ 
+            success: false,
+            message: "Failed to enroll in course" 
+        });
     }
 });
 

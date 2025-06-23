@@ -1,13 +1,14 @@
 import { FiArrowLeft } from "react-icons/fi";
-import { Link, useLocation} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Usersignin } from "../../atoms/atom";
 import { useAtomValue } from "jotai";
+import axios from 'axios';
 
 export default function UserCourseView() {
     const location = useLocation();
     const courseData = location.state?.course;
-    const isSignedin=useAtomValue(Usersignin);
-    if(!isSignedin){
+    const isSignedin = useAtomValue(Usersignin);
+    if (!isSignedin) {
         return (
             <div className="ml-170 mt-10 text-2xl text-red-500">You are not signed in</div>
         );
@@ -19,6 +20,18 @@ export default function UserCourseView() {
         );
     } else {
         console.log(courseData);
+        async function enroll() {
+            try {
+                const token = localStorage.getItem('token'); 
+                const response = await axios.post('http://localhost:3000/enroll/course', {
+                    token,
+                    courseId: courseData._id
+                });
+                console.log(response.data.message);
+            } catch (error) {
+                console.error(error.response?.data?.message || 'Enrollment failed');
+            }
+        }
         return (
             <div className="mb-20">
                 <div className="flex ml-90 mt-5">
@@ -27,7 +40,7 @@ export default function UserCourseView() {
                             <FiArrowLeft className="mt-5 h-5 w-8 text-gray-600 rounded-xl hover:bg-gray-200 cursor-pointer" />
                             <p className="mt-4">Back to Courses</p>
                         </div>
-                    </Link>                    
+                    </Link>
                 </div>
 
                 <div className="flex">
@@ -101,14 +114,8 @@ export default function UserCourseView() {
                     </div>
                     <div className="bg-white rounded-xl shadow-lg w-73 h-90 p-6 ml-5 mt-10">
                         <div className="text-center mb-6">
-                            <div className="text-3xl font-bold text-gray-900 mb-1">${courseData.price*courseData.totalEnrolled}</div>
-                            <div className="text-gray-600 text-sm">Total Revenue</div>
-                        </div>
-
-                        <div className="text-center mb-8">
-                            <div className="flex items-center justify-center gap-2 mb-2">
-                                <span className="text-2xl font-bold text-gray-900">${courseData.price}</span>
-                            </div>
+                            <div className="text-3xl font-bold text-gray-900 mb-1">${courseData.price}</div>
+                            <div className="text-gray-600 text-sm">Price</div>
                         </div>
 
                         <div>
@@ -129,7 +136,12 @@ export default function UserCourseView() {
                                     <span className="text-gray-600 text-sm">Last updated</span>
                                     <span className="font-semibold text-gray-900">2 days ago</span>
                                 </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-600 text-sm">By Instructor</span>
+                                    <span className="font-semibold text-gray-900">{courseData.creatorName}</span>
+                                </div>
                             </div>
+                            <button onClick={enroll} className="bg-black text-white w-60 h-10 rounded-lg cursor-pointer mt-5 hover:bg-gray-800">Enroll Now</button>
                         </div>
                     </div>
                 </div>

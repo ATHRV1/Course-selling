@@ -8,9 +8,9 @@ export default function CourseLandUser({title, category, level}) {
             />
             <div>
                 <p className="mt-5 ml-7 font-semibold text-lg">{title}</p>
-                <div className="flex ml-4">
-                    <p className="mt-0.5 ml-1">{category}</p>
-                    <p className="mt-0.5 ml-2">{level}</p>
+                <div className="flex ml-5 mt-1">
+                    <p className="mt-0.5 ml-2 bg-gray-200 rounded-lg px-2 py-0.5">{category}</p>
+                    <p className="mt-0.5 ml-2 bg-gray-200 rounded-lg px-2 py-0.5">{level}</p>
                 </div>
             </div>
         </div>
