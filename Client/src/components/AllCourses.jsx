@@ -9,19 +9,26 @@ export default function AllCourses() {
     const nav=useNavigate();
 
     useEffect(() => {
-        async function fetch() {
-            try {
-                const res = await axios.get("http://localhost:3000/courses/all");
-                console.log(res);
-                setCourses(res.data);
-
+    async function fetch() {
+        try {
+            const token = localStorage.getItem('token');
+            const config = {};
+            
+            if (token) {
+                config.headers = {
+                    token: token
+                };
             }
-            catch (err) {
-                console.log(err);
-            }
+            
+            const res = await axios.get("http://localhost:3000/courses/all", config);
+            setCourses(res.data);
         }
-        fetch();
-    }, [])
+        catch (err) {
+            console.log(err);
+        }
+    }
+    fetch();
+}, [])
     return (
         <div>
             <p className="text-2xl font-bold ml-30 mt-10">All Courses</p>
