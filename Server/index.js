@@ -818,7 +818,7 @@ app.get("/courses/all", async (req, res) => {
                     isPublished: 1,
                     createdAt: 1,
                     creatorName: "$creatorDetails.username", 
-                    totalEnrolled: { $size: "$enrolledUsers" },
+                    totalEnrolled: { $size: "$enrolledUsers" || 0 },
                     averageRating: { 
                         $ifNull: [{ $avg: "$courseRatings.rating" }, 0] 
                     }

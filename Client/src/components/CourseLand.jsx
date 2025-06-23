@@ -1,7 +1,7 @@
 import { BsFillStarFill } from "react-icons/bs";
 import { FiClock, FiUsers } from "react-icons/fi";
 
-export default function CourseLand({title, creator,rating,users,duration,price}){
+export default function CourseLand({title, creator,rating,users,duration,price,enroll}){
     const getValue = (value) => {
         if (typeof value === 'object' && value?.$numberDecimal) {
             return parseFloat(value.$numberDecimal);
@@ -36,7 +36,7 @@ export default function CourseLand({title, creator,rating,users,duration,price})
                     </div>
                     <div className="flex mt-5">
                         <p className="text-xl text-black font-bold mt-1 ml-5">${price}</p>
-                        <button className=" bg-black text-lg text-white w-35 h-10 cursor-pointer rounded-lg ml-35">
+                        <button onClick={enroll} className=" bg-black text-lg text-white w-35 h-10 cursor-pointer rounded-lg ml-35">
                             Enroll now
                         </button>
                     </div>
